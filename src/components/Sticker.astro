@@ -1,0 +1,46 @@
+---
+/**
+ * Authored flat "sticker" illustrations for the Sunny sample: single-colour fields, no gradients,
+ * no shadows. Stand-ins for the cut-out product photography this genre normally uses.
+ */
+interface Props {
+  kind: 'bag' | 'cup';
+  /** bag body / cup colour */
+  body: string;
+  /** label colour */
+  label?: string;
+  ink: string;
+  /** short name lettered on the bag label */
+  name?: string;
+  class?: string;
+}
+const { kind, body, label = '#f7f0e1', ink, name = 'GRATIA', class: cls = '' } = Astro.props;
+// Longer names get a smaller size so the lettering always fits the 108-unit label.
+const fs = Math.min(23, 92 / (name.length * 0.74));
+---
+
+{
+  kind === 'bag' ? (
+    <svg class={cls} viewBox="0 0 200 270" aria-hidden="true" focusable="false">
+      <path d="M34 46h132l14 196c1 12-6 20-18 20H38c-12 0-19-8-18-20z" fill={body}></path>
+      <path d="M30 24h140l-4 26H34z" fill={body}></path>
+      <path d="M30 24h140l-3 14H33z" fill={ink} opacity="0.18"></path>
+      <path d="M44 62l-8 190" stroke={ink} stroke-width="4" stroke-linecap="round" opacity="0.14" fill="none"></path>
+      <rect x="46" y="96" width="108" height="118" rx="14" fill={label}></rect>
+      <g transform="translate(100 134) rotate(-24)">
+        <ellipse rx="19" ry="12.5" fill={ink}></ellipse>
+        <path d="M-15 -1 C -8 -7, 8 6, 15 0" fill="none" stroke={label} stroke-width="2.6" stroke-linecap="round"></path>
+      </g>
+      <text x="100" y="186" text-anchor="middle" font-family="'Archivo Variable','Archivo',Arial,sans-serif" font-weight="900" font-size={fs.toFixed(1)} letter-spacing="0.5" fill={ink}>{name.toUpperCase()}</text>
+      <rect x="62" y="196" width="76" height="3" rx="1.5" fill={ink}></rect>
+    </svg>
+  ) : (
+    <svg class={cls} viewBox="0 0 240 220" aria-hidden="true" focusable="false">
+      <path d="M92 18c-10 14 10 22 0 38M120 10c-10 14 10 22 0 40M148 18c-10 14 10 22 0 38" fill="none" stroke={ink} stroke-width="6" stroke-linecap="round"></path>
+      <path d="M34 82h152v38c0 38-30 64-76 64s-76-26-76-64z" fill={body}></path>
+      <path d="M186 96h14c20 0 20 38 0 38h-18" fill="none" stroke={body} stroke-width="14" stroke-linecap="round" stroke-linejoin="round"></path>
+      <ellipse cx="110" cy="82" rx="76" ry="12" fill={ink}></ellipse>
+      <ellipse cx="110" cy="204" rx="104" ry="11" fill={ink}></ellipse>
+    </svg>
+  )
+}

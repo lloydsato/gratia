@@ -1,0 +1,43 @@
+---
+import SampleSwitcher from '../components/SampleSwitcher.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Browser UI colour (mobile address bar). */
+  themeColor?: string;
+  bodyClass?: string;
+  /** Which sample this is (1–4) so the switcher can mark it. Omit on the picker. */
+  sample?: 1 | 2 | 3 | 4;
+}
+
+const {
+  title,
+  description = 'Gratia: a placeholder brand used to compare four design directions.',
+  themeColor = '#111111',
+  bodyClass = '',
+  sample,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={themeColor} />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+    <!-- Content is visible by default. CSS only hides things for animation when this class is present. -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+    <slot name="head" />
+  </head>
+  <body class={bodyClass}>
+    <slot />
+    {sample && <SampleSwitcher current={sample} />}
+  </body>
+</html>

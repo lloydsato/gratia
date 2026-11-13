@@ -1,0 +1,322 @@
+---
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource-variable/familjen-grotesk';
+import '@fontsource-variable/martian-mono';
+import '@fontsource/instrument-serif';
+import '@fontsource/bebas-neue';
+import '../../styles/precision.css';
+
+import Base from '../../layouts/Base.astro';
+import BeanField from '../../components/BeanField.astro';
+import { brand, nav, hero, statement, stats, coffees, process, roastCurve, cafes, order, wholesale } from '../../content/gratia';
+
+// ---- Roast-curve chart, computed at build time from placeholder data ----
+const W = 760, H = 364;
+const pad = { l: 58, r: 18, t: 22, b: 46 };
+const xMax = 14, yMin = 80, yMax = 220;
+const sx = (m: number) => pad.l + (m / xMax) * (W - pad.l - pad.r);
+const sy = (c: number) => pad.t + (1 - (c - yMin) / (yMax - yMin)) * (H - pad.t - pad.b);
+const pts = roastCurve.points.map(([m, c]) => [sx(m), sy(c)] as const);
+// Catmull-Rom to cubic Bezier for a smooth, honest curve.
+let curve = `M${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+for (let i = 0; i < pts.length - 1; i++) {
+  const p0 = pts[i - 1] ?? pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] ?? p2;
+  const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6];
+  const c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+  curve += ` C${c1[0].toFixed(1)} ${c1[1].toFixed(1)} ${c2[0].toFixed(1)} ${c2[1].toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+}
+const tempAt = (m: number) => {
+  const p = roastCurve.points;
+  for (let i = 0; i < p.length - 1; i++) {
+    if (m >= p[i][0] && m <= p[i + 1][0]) {
+      const t = (m - p[i][0]) / (p[i + 1][0] - p[i][0]);
+      return p[i][1] + (p[i + 1][1] - p[i][1]) * t;
+    }
+  }
+  return p[p.length - 1][1];
+};
+const yTicks = [100, 150, 200];
+const xTicks = [0, 2, 4, 6, 8, 10, 12, 14];
+
+// Roast level to bean tones: lighter roast = lighter beans. Darkness carries meaning.
+const tones: Record<number, { palette: string[]; bg: string; groove: string }> = {
+  1: { palette: ['#d6d2cb', '#cdc9c1'], bg: '#e3e0db', groove: '#e3e0db' },
+  2: { palette: ['#bcb8b0', '#b2aea6', '#c4c0b8'], bg: '#d9d6d0', groove: '#d9d6d0' },
+  3: { palette: ['#8f8b85', '#9a9690', '#85817b'], bg: '#cfccc6', groove: '#cfccc6' },
+  4: { palette: ['#5d5a56', '#67645f', '#54514d'], bg: '#c6c3bd', groove: '#c6c3bd' },
+  5: { palette: ['#3a3835', '#43413e'], bg: '#bdbab4', groove: '#bdbab4' },
+};
+---
+
+<Base title={`${brand.full} · Precision`} themeColor="#040508" bodyClass="pr" sample={1}>
+  <script is:inline slot="head">
+    // Preloader shows once per session (and on ?intro) so comparing samples isn't a chore.
+    (function () {
+      try {
+        var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var seen = sessionStorage.getItem('gratia-pl-precision');
+        if (!reduced && (!seen || /[?&]intro/.test(location.search))) document.documentElement.classList.add('pl-on');
+      } catch (e) {
+        document.documentElement.classList.add('pl-on');
+      }
+    })();
+  </script>
+
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- 1. PRELOADER: belts, border draw, registration marks, odometer. Skipped for reduced motion. -->
+  <div class="pl" role="status" aria-label="Loading">
+    <div class="pl__ground"></div>
+    <div class="pl__belts" aria-hidden="true">
+      <span class="pl__belt"></span><span class="pl__belt"></span><span class="pl__belt"></span>
+      <span class="pl__belt"></span><span class="pl__belt"></span><span class="pl__belt"></span>
+    </div>
+    <div class="pl__center" aria-hidden="true">
+      <div class="pl__logo-wrap">
+        <svg class="pl__border" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <rect x="0.5" y="0.5" width="99" height="99" fill="none" stroke="currentColor" stroke-width="0.6" pathLength="1"></rect>
+        </svg>
+        <i class="pl__plus pl__plus--tl">+</i><i class="pl__plus pl__plus--tr">+</i>
+        <i class="pl__plus pl__plus--bl">+</i><i class="pl__plus pl__plus--br">+</i>
+        <div class="pl__mark">{brand.name.toUpperCase()}</div>
+      </div>
+      <div class="pl__tagline">
+        <span class="pl__word">Roast</span><span class="pl__dot">·</span>
+        <span class="pl__word">Rest</span><span class="pl__dot">·</span>
+        <span class="pl__word">Send</span>
+      </div>
+    </div>
+    <div class="pl__counter" aria-hidden="true"></div>
+    <i class="pl__flyer" aria-hidden="true">+</i>
+  </div>
+
+  <!-- 2. HEADER -->
+  <header class="nav">
+    <a class="nav__brand" href="#top" aria-label={`${brand.name}, back to top`}>
+      <svg viewBox="0 0 64 64" width="22" height="22" aria-hidden="true">
+        <g transform="translate(32 32) rotate(-28)" fill="none" stroke="currentColor" stroke-width="3.4">
+          <ellipse rx="22" ry="14.5"></ellipse>
+          <path d="M-18 -1 C -9 -8, 9 7, 18 0" stroke-linecap="round"></path>
+        </g>
+      </svg>
+      <span>{brand.name.toUpperCase()}</span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      {nav.slice(0, 3).map((n) => (
+        <a class="nav__link" href={n.href}>
+          <span class="roll"><span class="roll__in">{n.label}</span><span class="roll__out" aria-hidden="true">{n.label}</span></span>
+        </a>
+      ))}
+    </nav>
+    <div class="nav__right">
+      <a class="btn btn--pill" href="#order">
+        <span class="roll"><span class="roll__in">Order</span><span class="roll__out" aria-hidden="true">Order</span></span>
+      </a>
+      <button class="btn btn--pill btn--menu" type="button" aria-expanded="false" aria-controls="menu-panel">
+        <span>Menu</span>
+        <span class="btn__bars" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+    <div class="menu-panel glass" id="menu-panel" hidden>
+      {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 3. HERO (dark ground) -->
+    <section class="hero" id="top">
+      <h1 class="hero__title reveal">{hero.headline}</h1>
+
+      <div class="hero__stage" aria-hidden="true">
+        <!-- three.js wireframe bean mounts here. These rings are the no-WebGL fallback. -->
+        <div class="stage__wire">
+          <span class="stage__ring"></span><span class="stage__ring"></span><span class="stage__ring"></span>
+          <canvas class="stage__canvas"></canvas>
+          <i class="stage__cross stage__cross--tl">+</i><i class="stage__cross stage__cross--tr">+</i>
+          <i class="stage__cross stage__cross--bl">+</i><i class="stage__cross stage__cross--br">+</i>
+        </div>
+      </div>
+
+      <aside class="hero__card glass" aria-label="Sample roast readout">
+        <div class="hero__card-badge">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="mono">Sample batch</span>
+        </div>
+        <dl class="readout mono">
+          <div><dt>Bean temp</dt><dd><span data-temp>212</span> °C</dd></div>
+          <div><dt>Elapsed</dt><dd data-clock>14:00</dd></div>
+          <div><dt>Stage</dt><dd data-stage>Drop</dd></div>
+        </dl>
+      </aside>
+
+      <p class="hero__support">{hero.lede}</p>
+
+      <p class="hero__cta">
+        <a class="btn btn--solid" href="#order">{hero.primaryCta}</a>
+        <a class="btn btn--ghost" href="#coffee">{hero.secondaryCta}</a>
+      </p>
+
+      <div class="hero__cue" aria-hidden="true"><span class="scroll-arrow">↓</span></div>
+    </section>
+
+    <!-- 4. BODY (cream ground, inversion point) -->
+    <section class="section section--light" id="statement">
+      <p class="display statement">{statement.text}</p>
+
+      <div class="rule reveal" role="presentation"></div>
+
+      <!-- Instrument strip: odometer readouts -->
+      <ul class="panel stats" aria-label="Gratia in numbers">
+        {stats.map((s) => (
+          <li class="stat">
+            <span class="stat__num">
+              <span class="odo" data-odo={s.value}>{s.value}</span><span class="stat__suffix">{s.suffix}</span>
+            </span>
+            <p class="stat__label mono">{s.label}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="section section--light section--tight" id="coffee" aria-labelledby="coffee-h">
+      <h2 class="display" id="coffee-h">Four coffees.<br />Roasted this week.</h2>
+      <ul class="specs">
+        {coffees.map((c) => {
+          const t = tones[c.roast];
+          return (
+            <li class="spec">
+              <div class="spec__plate frame">
+                <i class="corner"></i>
+                <BeanField id={`pr-${c.id}`} seed={c.id.length * 13 + c.roast} palette={t.palette} groove={t.groove} bg={t.bg} cols={5} rows={5} w={400} h={400} scale={[0.8, 1.05]} jitter={0.3} />
+              </div>
+              <div class="spec__main">
+                <h3 class="spec__name">{c.name}</h3>
+                <p class="spec__origin mono">{c.origin} · {c.process}</p>
+                <p class="spec__notes">{c.notes.join(', ')}.</p>
+                <p class="spec__blurb">{c.blurb}</p>
+              </div>
+              <dl class="spec__data mono">
+                <div><dt>Altitude</dt><dd>{c.altitude}</dd></div>
+                <div>
+                  <dt>Roast</dt>
+                  <dd>
+                    <span class="roastbar" role="img" aria-label={`Roast level ${c.roast} of 5, ${c.roastLabel}`}>
+                      {[1, 2, 3, 4, 5].map((n) => <i class={n <= c.roast ? 'on' : ''}></i>)}
+                    </span>
+                    {c.roastLabel}
+                  </dd>
+                </div>
+              </dl>
+              <div class="spec__buy">
+                <p class="spec__price">{c.price}<span class="mono"> / {c.size}</span></p>
+                <a class="btn btn--pill" href="#order" aria-label={`Subscribe to ${c.name}`}>
+                  <span class="roll"><span class="roll__in">Subscribe</span><span class="roll__out" aria-hidden="true">Subscribe</span></span>
+                </a>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+
+    <section class="section section--light section--tight" id="roastery" aria-labelledby="roast-h">
+      <h2 class="display" id="roast-h">Roasted by the curve,<br />tasted by the cup.</h2>
+      <div class="roastery">
+        <ol class="steps">
+          {process.map((p) => (
+            <li class="step">
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </li>
+          ))}
+        </ol>
+
+        <figure class="instrument frame">
+          <i class="corner"></i>
+          <figcaption class="instrument__cap mono">{roastCurve.title}. Placeholder data.</figcaption>
+          <svg class="curve" viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Line chart: bean temperature in degrees Celsius over a fourteen minute roast, dropping to about 90 at two minutes, then climbing to 212 at the drop." focusable="false">
+            {yTicks.map((c) => (
+              <g class="curve__grid">
+                <line x1={pad.l} x2={W - pad.r} y1={sy(c)} y2={sy(c)}></line>
+                <text x={pad.l - 10} y={sy(c) + 5} text-anchor="end">{c}°</text>
+              </g>
+            ))}
+            {xTicks.map((m) => (
+              <g class="curve__tick">
+                <line x1={sx(m)} x2={sx(m)} y1={H - pad.b} y2={H - pad.b + 6}></line>
+                <text x={sx(m)} y={H - pad.b + 24} text-anchor="middle">{m}</text>
+              </g>
+            ))}
+            <text class="curve__unit" x={(pad.l + W - pad.r) / 2} y={H - 4} text-anchor="middle">minutes</text>
+            <path class="curve__line" d={curve} pathLength="1" fill="none"></path>
+            {roastCurve.events.map((e, i) => (
+              <g class="curve__event" data-at={e.at}>
+                <line x1={sx(e.at)} x2={sx(e.at)} y1={pad.t} y2={H - pad.b}></line>
+                <text class="curve__plus" x={sx(e.at)} y={sy(tempAt(e.at)) + 5} text-anchor="middle">+</text>
+                <text class="curve__label" x={sx(e.at) - 8} y={pad.t + 14 + i * 0} text-anchor="end">{e.label}</text>
+              </g>
+            ))}
+          </svg>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section--light section--tight" id="cafes" aria-labelledby="cafes-h">
+      <h2 class="display" id="cafes-h">Come and<br />say hello.</h2>
+      <ul class="cafes">
+        {cafes.map((c) => (
+          <li class="cafe">
+            <div>
+              <h3 class="cafe__name">{c.name}</h3>
+              <p class="cafe__addr">{c.address}</p>
+            </div>
+            <p class="cafe__note">{c.note}</p>
+            <p class="cafe__hours mono">{c.hours}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- 5. ORDER / CONTACT (dark ground again) -->
+    <section class="section section--dark" id="order" aria-labelledby="order-h">
+      <h2 class="display display--light" id="order-h">{order.title}</h2>
+      <p class="contact__note">{order.text}</p>
+
+      <form class="form" data-mock-form>
+        <div class="form__row">
+          <label class="field">
+            <span class="mono field__label">{order.emailLabel}</span>
+            <input type="email" name="email" required autocomplete="email" placeholder={order.emailPlaceholder} />
+          </label>
+          <label class="field">
+            <span class="mono field__label">{order.brewLabel}</span>
+            <select name="brew">
+              {order.brewOptions.map((o) => <option>{o}</option>)}
+            </select>
+          </label>
+        </div>
+        <button class="btn btn--solid" type="submit">{order.submit}</button>
+        <p class="form__status mono" data-form-status role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="wholesale">
+        <h3>{wholesale.title}</h3>
+        <p>{wholesale.text} <a class="underline" href={`mailto:${brand.email}`}>{wholesale.cta}</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__grid">
+      <div><span class="mono footer__k">Roastery</span><p>Unit 4, Mill Lane<br />Wed–Sun · 9:00–16:00</p></div>
+      <div><span class="mono footer__k">Contact</span><p><a href={`mailto:${brand.email}`}>{brand.email}</a></p></div>
+      <div><span class="mono footer__k">Name</span><p>{brand.name}: {brand.meaning}.</p></div>
+      <div><span class="mono footer__k">Note</span><p>{brand.placeholderNote}</p></div>
+    </div>
+    <p class="footer__tag mono">Roast · Rest · Send · © {brand.year} {brand.name}</p>
+  </footer>
+
+  <script>
+    import '../../scripts/precision';
+  </script>
+</Base>
