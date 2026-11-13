@@ -1,0 +1,86 @@
+---
+/**
+ * Review chrome, not part of any design. A small fixed pager so you can hop between
+ * the four samples while comparing. Remove it (and its use in Base.astro) once a
+ * direction is chosen. Self-contained styles so it looks identical on every sample.
+ */
+interface Props {
+  current: 1 | 2 | 3 | 4;
+}
+const { current } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const items = [
+  { n: 1, name: 'Precision', href: `${base}precision/` },
+  { n: 2, name: 'Motion', href: `${base}motion/` },
+  { n: 3, name: 'Editorial', href: `${base}editorial/` },
+  { n: 4, name: 'Sunny', href: `${base}sunny/` },
+];
+---
+
+<nav class="sw" aria-label="Design samples">
+  <a class="sw-all" href={base}>All</a>
+  {
+    items.map((i) => (
+      <a
+        class="sw-i"
+        href={i.href}
+        aria-current={i.n === current ? 'page' : undefined}
+        aria-label={`Sample ${i.n}: ${i.name}`}
+        title={i.name}
+      >
+        {i.n}
+      </a>
+    ))
+  }
+</nav>
+
+<style is:global>
+  .sw {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 2147483000;
+    display: flex;
+    gap: 2px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgb(18 18 20 / 0.92);
+    border: 1px solid rgb(255 255 255 / 0.18);
+    font: 600 12px/1 system-ui, -apple-system, 'Segoe UI', sans-serif;
+    letter-spacing: 0.02em;
+    cursor: auto;
+  }
+  .sw a {
+    display: grid;
+    place-items: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 999px;
+    color: #f2f2f2;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .sw a:hover {
+    background: rgb(255 255 255 / 0.16);
+  }
+  .sw a[aria-current='page'] {
+    background: #f2f2f2;
+    color: #111;
+  }
+  .sw a:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+  @media (max-width: 480px) {
+    .sw {
+      right: 8px;
+      bottom: 8px;
+    }
+  }
+  /* Respect the page's own custom cursor systems: never hide the real pointer over the switcher. */
+  .sw,
+  .sw * {
+    cursor: pointer !important;
+  }
+</style>

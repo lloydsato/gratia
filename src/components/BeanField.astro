@@ -1,0 +1,112 @@
+---
+/**
+ * Authored placeholder imagery: a deterministic field of coffee beans as inline SVG.
+ * No photograph exists for Gratia yet, so each sample dresses this in its own palette.
+ * Server-rendered, zero JS. Decorative by default (aria-hidden).
+ */
+interface Props {
+  /** Unique per instance on a page (used for the <symbol> id). */
+  id: string;
+  seed?: number;
+  /** Bean fill colours, picked per bean. */
+  palette: string[];
+  /** Colour of the crease. */
+  groove: string;
+  /** Optional background rect colour. */
+  bg?: string;
+  cols?: number;
+  rows?: number;
+  /** Bean scale range relative to the grid cell. */
+  scale?: [number, number];
+  /** 0–1, how far a bean may wander from its cell centre. */
+  jitter?: number;
+  /** Fraction of cells left empty (0–1) for an airier field. */
+  gaps?: number;
+  w?: number;
+  h?: number;
+  class?: string;
+  label?: string;
+}
+
+const {
+  id,
+  seed = 1,
+  palette,
+  groove,
+  bg,
+  cols = 8,
+  rows = 6,
+  scale = [0.78, 1.05],
+  jitter = 0.35,
+  gaps = 0,
+  w = 800,
+  h = 600,
+  class: className = '',
+  label,
+} = Astro.props;
+
+// mulberry32: tiny seeded PRNG so every build renders the same field.
+function rng(a: number) {
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rand = rng(seed);
+
+const cw = w / cols;
+const ch = h / rows;
+// A bean symbol is 100 x 68 units; scale so it nearly fills a cell.
+const base = Math.min(cw / 100, ch / 68) * 1.25;
+
+const beans: { x: number; y: number; r: number; s: number; fill: string }[] = [];
+for (let row = -1; row <= rows; row++) {
+  for (let col = -1; col <= cols; col++) {
+    if (rand() < gaps) continue;
+    const offset = row % 2 ? cw * 0.5 : 0; // brick offset reads as a pile, not a grid
+    beans.push({
+      x: col * cw + cw / 2 + offset + (rand() - 0.5) * cw * jitter * 2,
+      y: row * ch + ch / 2 + (rand() - 0.5) * ch * jitter * 2,
+      r: rand() * 360,
+      s: base * (scale[0] + rand() * (scale[1] - scale[0])),
+      fill: palette[Math.floor(rand() * palette.length)],
+    });
+  }
+}
+const sym = `bean-${id}`;
+---
+
+<svg
+  class={className}
+  viewBox={`0 0 ${w} ${h}`}
+  preserveAspectRatio="xMidYMid slice"
+  xmlns="http://www.w3.org/2000/svg"
+  style={`--groove:${groove}`}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <defs>
+    <symbol id={sym} viewBox="-50 -34 100 68" overflow="visible">
+      <ellipse rx="44" ry="29"></ellipse>
+      <path
+        d="M-38 -2 C -18 -17, 18 14, 38 0"
+        fill="none"
+        stroke-linecap="round"
+        stroke-width="5"
+        style="stroke:var(--groove)"></path>
+    </symbol>
+  </defs>
+  {bg && <rect width={w} height={h} fill={bg} />}
+  {
+    beans.map((b) => (
+      <g transform={`translate(${b.x.toFixed(1)} ${b.y.toFixed(1)}) rotate(${b.r.toFixed(0)}) scale(${b.s.toFixed(3)})`} fill={b.fill}>
+        <use href={`#${sym}`} x="-50" y="-34" width="100" height="68"></use>
+      </g>
+    ))
+  }
+</svg>
