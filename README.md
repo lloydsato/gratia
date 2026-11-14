@@ -14,14 +14,18 @@ npm run build    # static site in dist/
 
 Node 22.23+. Astro static output; host `dist/` anywhere. Set `site` (and `base` if under a sub-path) in `astro.config.mjs`.
 
-## Deploy to GitHub Pages
+## Deploy on Vercel
 
-`.github/workflows/deploy.yml` builds the site and publishes `dist/` on every push to `main`.
+The site is plain static output, so Vercel needs no adapter or config file.
 
-1. In the repo: **Settings, Pages, Build and deployment, Source: GitHub Actions** (one-time).
-2. Push to `main`. The site appears at `https://lloydsato.github.io/gratia/`.
+1. In Vercel: **Add New, Project**, import this GitHub repo.
+2. Framework preset is detected as **Astro** (build `npm run build`, output `dist`). Under *Settings, General, Node.js Version* choose **22.x** (the project needs Node 22.23 or newer).
+3. Deploy. Every push to `main` redeploys; other branches get preview URLs.
+4. For a custom domain: *Settings, Domains*, add it (a subdomain such as `gratia.example.com` is a single CNAME record), then set `site` in `astro.config.mjs` to that URL.
 
-`astro.config.mjs` sets `site` and `base: '/gratia/'`, and every internal link goes through `withBase()` (`src/utils/url.ts`). To use a custom domain at the root instead: set `site` to the domain, `base` to `'/'`, add `public/CNAME` with the domain, and point DNS at GitHub.
+Do not host this under a sub-path of another site (for example `yourdomain.com/gratia/`) unless you set `base` in `astro.config.mjs`; all internal links go through `withBase()` so that works, but the root is simplest.
+
+GitHub Pages is not used: if Pages is enabled on the repo with the "Deploy from a branch" source, GitHub tries to build it as Jekyll and fails. Turn Pages off in **Settings, Pages** (or set Source to GitHub Actions with no workflow).
 
 ## Pages
 
