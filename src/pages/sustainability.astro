@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import { commitments, standards } from '../content/site';
+---
+<Base title="Compliance and sustainability" description="How Gratia Sourcing verifies supplier compliance, tests materials and reduces the footprint of the goods we ship.">
+  <section class="page-head wrap">
+    <h1>Compliance you can ask to see.</h1>
+    <p class="lede">We verify the certificates our suppliers hold and the tests your market requires. Which standards apply to your product is set at gate one and checked at the gates after it.</p>
+  </section>
+
+  <section class="wrap section-tight" aria-labelledby="std-h">
+    <h2 id="std-h">Standards we check against</h2>
+    <p class="mute" style="margin-top:16px">We verify supplier certification. Whether Gratia Sourcing itself holds any is placeholder and must be confirmed before launch.</p>
+    <table class="plain">
+      <thead><tr><th scope="col">Standard</th><th scope="col">What it covers</th><th scope="col">How we check</th></tr></thead>
+      <tbody>{standards.map((s) => (<tr><td>{s.name}</td><td>{s.covers}</td><td>{s.check}</td></tr>))}</tbody>
+    </table>
+  </section>
+
+  <section class="section wrap two" aria-labelledby="com-h">
+    <div class="head"><h2 id="com-h">Our commitments.</h2><p class="lede">Placeholder policy. Replace with Gratia's real commitments and the documents behind them.</p></div>
+    <ul class="commit">
+      {commitments.map((c) => (<li><h3>{c.name}</h3><p>{c.text}</p></li>))}
+    </ul>
+  </section>
+
+  <section class="close on-dark" style="padding-block:72px">
+    <div class="wrap"><div class="board"><div class="close-row"><span class="ft" style="max-width:24ch">Need a certificate or test report?</span><a class="btn" href="/contact/">Ask us</a></div></div></div>
+  </section>
+</Base>

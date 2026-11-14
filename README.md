@@ -1,15 +1,8 @@
-# Gratia: design samples
+# Gratia Sourcing
 
-Four sample landing pages for **Gratia**, a made-up coffee roaster, one per design kit. Same brand, same copy, same sections on every page, so the only thing that differs is the design. Open each, pick one, then build the real site on it.
+Marketing site for **Gratia Sourcing**, a buying house that sources home textiles and home hard goods in India for overseas brands and retailers. Built as a time-and-action order board: fixed columns, rows as live orders, flaps that cascade as an order clears a signed gate.
 
-| # | Route | Kit | Feel | Signature |
-|---|---|---|---|---|
-| 1 | `/precision/` | Precision Studio | Calm, instrument-like | three.js wireframe bean, dark → cream → dark inversion, odometer counters |
-| 2 | `/motion/` | Hobro-style motion agency | Cinematic, loud | thank-you preloader, custom cursor, draggable coffee strip |
-| 3 | `/editorial/` | Editorial WebGL | Print art-director | visible 4-column grid, curtain intro, three.js halftone shader, Flip list/grid |
-| 4 | `/sunny/` | Paput-style | Friendly, flat colour | pills, colour bands, tilted solid/outline marquee |
-
-`/` is a picker with previews and a side-by-side comparison.
+Design context lives in `PRODUCT.md` (who and why), `DESIGN.md` (tokens and rules) and `.impeccable/` (sidecar and direction brief).
 
 ## Run it
 
@@ -19,41 +12,45 @@ npm run dev      # http://localhost:4321
 npm run build    # static site in dist/
 ```
 
-Node 22.23+ (Astro 7). Everything is static; host `dist/` anywhere. If you host under a sub-path, set `base` in `astro.config.mjs`.
+Node 22.23+. Astro static output; host `dist/` anywhere. Set `site` (and `base` if under a sub-path) in `astro.config.mjs`.
 
-## Everything is placeholder
+## Pages
 
-Gratia is invented. **Every name, price, address, hour, number and quote is placeholder content** and must be replaced before anything ships. It all lives in one file, `src/content/gratia.ts`, which all four samples read.
+`/` home · `/services/` · `/how-we-work/` (gate calendar calculator) · `/products/` · `/sustainability/` (compliance) · `/about/` · `/contact/` · `/404`
 
-There is no photography. Imagery is authored: SVG bean fields (`BeanField.astro`), flat sticker illustrations (`Sticker.astro`), an SVG roast curve and two three.js scenes. Swap in real photos when they exist.
+## Everything factual is placeholder
 
-The forms are visual mocks and send nothing.
+No real facts were supplied. All copy and data live in **`src/content/site.ts`**; swap them there. Turn off the "Draft site" strip with `draftNotice: false`.
 
-## Layout
+Replace before launch:
 
-```
-src/content/gratia.ts     shared copy for all four samples
-src/pages/                index (picker) + one folder per sample
-src/styles/               one stylesheet per sample (tokens at the top)
-src/scripts/              one script per sample + shared helpers; three.js code is lazy-loaded
-src/components/           BeanField, Sticker, Burst, Arrow, SampleSwitcher
-PRODUCT.md                product context (Impeccable)
-.impeccable/surfaces/     one direction brief per sample
-```
+| What | Where | Note |
+|---|---|---|
+| Email, phone, address, hours | `site` | all invented (`.example` email) |
+| Sample orders on the board | `orders` | shown with a SAMPLE DATA label; use real examples or remove |
+| Gate lead times (T-110 to T-0) | `gates[].offset` | planning placeholders |
+| Category MOQs, lead times, hubs, materials | `categories` | generic ranges; confirm each |
+| Certifications and standards | `standards`, `commitments` | the site only claims *checking suppliers'* certificates; confirm whether Gratia itself holds any |
+| Company story, team roles, FAQ answers | `about`, `faqs` | written as plausible placeholders |
+| Positioning | `PRODUCT.md` | the differentiator is an open decision |
 
-## Behaviour you can rely on
+Not invented on purpose: client names, testimonials, headcounts, years in business, and photographs.
 
-- Content is visible without JavaScript; animation states are only applied when JS runs.
-- `prefers-reduced-motion` skips intros and smooth scroll and shows final states (three.js renders one still frame).
-- Intros play once per browser session. Add `?intro` to a sample's URL to replay.
-- Checked with axe-core (WCAG 2.2 AA tags) on every page at 1440px and 390px: no violations. Text drawn over SVG patterns or WebGL could not be measured by axe and was checked by hand.
+## Imagery
 
-## After you choose
+No photography exists. Material swatches are authored SVG (`src/components/Swatch.astro`, drawn for this project, no third-party assets). Swap for real product photography when available.
 
-1. Delete the three unused samples (page, style, script) and `SampleSwitcher` from `Base.astro`.
-2. Replace the placeholder content and imagery.
-3. Run `/impeccable document` to write `DESIGN.md` for the chosen direction. It is deliberately not written yet.
+## Forms
 
-## Fonts and licensing
+The sourcing-brief form validates and shows an on-page notice but **sends nothing**. Connect an endpoint (Formspree, Netlify Forms, your own API) in `src/pages/contact.astro` before launch.
 
-Fonts are self-hosted from Fontsource (open licences). The kits name commercial faces they were modelled on; those are **not** included, and the free stand-ins are named in each stylesheet's `:root`. The kits were reverse-engineered from public sites: only structural tokens are reused, and none of those sites' names, copy, logos or photography appear here.
+## Behaviour
+
+- Content is visible without JavaScript; the board and calendar enhance it.
+- `prefers-reduced-motion`: no cascade, and the live board starts paused.
+- The live board has a pause control and also holds while hovered or focused.
+- axe-core (WCAG 2.2 AA tags): 0 violations on every page at 390 and 1440 px. Checked by hand at 375, 768, 1024, 1280, 1920 px for horizontal overflow.
+
+## Fonts
+
+Self-hosted via Fontsource (open licences): Barlow Condensed, Hanken Grotesk.

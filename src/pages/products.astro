@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+import Swatch from '../components/Swatch.astro';
+import { categories } from '../content/site';
+const groups = [
+  { id: 'textiles', title: 'Home textiles', items: categories.filter((c) => c.group === 'textiles') },
+  { id: 'hardgoods', title: 'Home hard goods', items: categories.filter((c) => c.group === 'hardgoods') },
+] as const;
+---
+<Base title="Products" description="Home textiles and home hard goods we source in India, with typical materials, production hubs, minimum orders and lead times.">
+  <section class="page-head wrap">
+    <h1>What we source, and where it is made.</h1>
+    <p class="lede">Twelve categories across two families. Minimums and lead times are typical ranges, not promises: every supplier quotes to your volume. Placeholder figures until confirmed.</p>
+  </section>
+
+  {groups.map((g) => (
+    <section class="wrap section-tight" id={g.id} aria-labelledby={`${g.id}-h`}>
+      <h2 id={`${g.id}-h`}>{g.title}</h2>
+      <div class="rows" style="margin-top:32px">
+        {g.items.map((c) => (
+          <article class="spec" id={c.id}>
+            <div class="sw"><Swatch kind={c.swatch} /></div>
+            <h3 style="font-size:2rem">{c.name}</h3>
+            <dl>
+              <dt>Includes</dt><dd>{c.items}</dd>
+              <dt>Materials</dt><dd>{c.materials}</dd>
+              <dt>Hubs</dt><dd>{c.hubs}</dd>
+              <dt>Typical MOQ</dt><dd class="tnum">{c.moq}</dd>
+              <dt>Lead time</dt><dd class="tnum">{c.lead}</dd>
+            </dl>
+          </article>
+        ))}
+      </div>
+    </section>
+  ))}
+
+  <section class="section on-dark">
+    <div class="wrap two">
+      <div class="head"><h2>Not on the list?</h2></div>
+      <div>
+        <p class="lede">If it is a home product made in India, send the brief. We will say plainly whether we can source it well.</p>
+        <p style="margin-top:24px"><a class="btn" href="/contact/">Send a sourcing brief</a></p>
+      </div>
+    </div>
+  </section>
+</Base>

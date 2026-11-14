@@ -8,51 +8,53 @@ web
 
 ## Stack
 
-Astro (static output), GSAP (ScrollTrigger, SplitText, Flip), three.js, Lenis for smooth scroll where a kit calls for it, self-hosted Fontsource fonts. Chosen by the user, replacing the kits' plain-HTML default.
+Astro, static output. Chosen by the user from three options (Astro / plain static HTML / Next.js). Multi-page, no CMS, no backend. Deployable to any static host.
 
 ## Users
 
-Coffee drinkers who buy whole-bean coffee online for home brewing and who also walk into the roaster's cafés. They land from a link or a search, decide in seconds whether this is a roaster worth ordering from, and want a bag on the way within two days.
+Overseas brand and retail buyers in the USA, Europe and the UK: sourcing managers, product developers and merchandisers at home-goods brands, e-commerce companies and retailers. (Confirmed by the user.)
+
+Their situation: they already hold a product idea, a target price and a volume, and are deciding whether a buying house in India can be trusted with it. They have several agency tabs open, read in a second or third language more often than not, and judge in minutes. Their job on this site: confirm the category is covered, understand how an order is controlled from sample to container, and find the way to start.
 
 ## Product Purpose
 
-Gratia is a **fictional placeholder brand**, invented by the assistant at the user's request ("Invent a placeholder for me"). This repository's job is to show the real Gratia owner four design directions on one shared brief so they can select one. Success is a clear, fair comparison: same brand, same copy, same sections, four visual worlds.
+Gratia Sourcing is a buying house (sourcing agent) that finds, develops, quality-checks and ships **home textiles** and **home hard goods** made in India for overseas buyers. (Scope confirmed by the user.)
 
-The placeholder brand is a small-batch coffee roastery that sells beans online by subscription and one-off bag, runs three cafés and supplies a few wholesale accounts.
+The website's job is to earn a sourcing brief: a buyer sends a product spec, drawing or reference and a target, and Gratia replies with a supplier shortlist and a quote path. Success is a qualified brief arriving, not page views.
 
 ## Positioning
 
-Gratia is "coffee, with thanks": the name is Latin for gratitude, and the thank-you, said in many languages, is the brand's one recurring device. Roasting is small and slow, and the page should feel like it was made by people who care about the details.
+Working position, **assumed and not yet confirmed by the user**: Gratia is the buyer's representative on the factory side of the table, one accountable team from first sample to loaded container. The differentiator beyond that is an open decision; do not invent one.
+
+The name is Latin *gratia*: grace, thanks, goodwill. The user supplied the name only.
 
 ## Operating Context
 
-- Beans are roasted weekly in 12 kg batches and shipped within 48 hours of roasting.
-- Four coffees are on sale at any time: three single origins and one house espresso blend.
-- Three cafés, each with posted opening hours.
-- A subscription is the primary action; a one-off bag is the secondary one.
+The industry-standard buying-house sequence, to be confirmed against how Gratia actually works: buyer brief, supplier shortlist, development samples, costing and negotiation, pre-production sample approval, production with in-line checks, final inspection to an agreed sampling standard, compliance paperwork, shipment. Buyers expect to see audits, social-compliance and test-lab certifications named, and lead times and minimum order quantities stated plainly.
 
 ## Capabilities and Constraints
 
-- Landing page only. No cart, checkout, accounts or CMS exist; every form is a visual mock and submits nowhere.
-- All four samples share one content module (`src/content/gratia.ts`) so differences between them are design, not copy.
-- Static pages, no server. Must work with JavaScript disabled (content visible by default) and with `prefers-reduced-motion`.
-- No photography exists. Imagery is authored (SVG bean fields, a three.js wireframe bean, a WebGL shader field) and is labelled as placeholder.
+- Static marketing site. The sourcing-brief form is a visual mock until an endpoint is chosen; it submits nowhere.
+- Category scope (assumed, modelled on the reference site's public structure, not its copy): home textiles (bedding, cushions, throws and blankets, rugs, bath, baby and pet) and home hard goods (furniture, lighting, home décor, wall décor and mirrors, storage, outdoor, drapery hardware).
+- Page set: home, about, services, how we work, product categories, sustainability and compliance, contact.
+- The reference site (ascentsourcing.in) was used for information architecture only. Its copy, logos, client names and photography must not be reused.
 
 ## Brand Commitments
 
-None yet. The name "Gratia" comes from the repository name; everything else about the brand is placeholder.
+- Name: **Gratia Sourcing**.
+- No logo, colours, voice or photography supplied. All are open and designed from scratch.
 
 ## Evidence on Hand
 
-None. There are no real customers, reviews, prices, addresses, certifications or photographs. **Every number, price, address, origin detail and quote in the samples is invented placeholder content and must be replaced before anything ships.** Do not present any of it as fact.
+**None.** There are no real clients, case studies, numbers, certifications, addresses, phone numbers, photographs or testimonials. Every name, figure, address and certification on the site is invented placeholder content, marked as such wherever a visitor could take it for real, and gathered in one content file with a swap list. Do not present any of it as fact. Do not use a real company's name as a client.
 
 ## Product Principles
 
-1. Same brief, four worlds: never let copy or structure differences decide the comparison.
-2. Opening hours and the primary action are findable within seconds on every sample.
-3. Motion is the genre where a kit calls for it, and never the only way to read the page.
-4. Placeholder content is labelled as placeholder wherever a visitor could take it for real.
+1. The brief is the product. Every page ends at the same action: send a sourcing brief.
+2. Show control, not claims. Process, inspection and compliance are drawn out concretely, because a buyer's fear is losing control of a factory they cannot see.
+3. A buyer's time is short. Categories, process, proof and contact are findable within seconds, in plain trade language.
+4. Honest placeholders. Invented facts are labelled until real ones replace them.
 
 ## Accessibility & Inclusion
 
-WCAG 2.1 AA contrast on every ground a kit uses, visible keyboard focus, 44px touch targets, full `prefers-reduced-motion` branch, semantic HTML under the animation.
+WCAG 2.1 AA contrast, visible keyboard focus, 44px touch targets, full `prefers-reduced-motion` branch, semantic HTML under any animation. Plain-English copy: many buyers read English as a second language. Content visible without JavaScript. Usable on a phone: buyers check suppliers between meetings and across time zones.

@@ -1,152 +1,92 @@
 ---
-import '@fontsource-variable/hanken-grotesk';
-import '@fontsource-variable/familjen-grotesk';
-import '@fontsource-variable/martian-mono';
-import '../styles/picker.css';
-
 import Base from '../layouts/Base.astro';
-import { brand } from '../content/gratia';
+import Board from '../components/Board.astro';
+import Swatch from '../components/Swatch.astro';
+import Flaps from '../components/Flaps.astro';
+import { hero, gates, categories, site } from '../content/site';
 
-const base = import.meta.env.BASE_URL;
-
-const samples = [
-  {
-    n: 1,
-    slug: 'precision',
-    name: 'Precision',
-    kit: 'Precision Studio kit',
-    line: 'A coffee roaster read like a measuring instrument. Calm, spacious, exact.',
-    img: `${base}previews/precision.jpg`,
-    alt: 'Preview: near-black hero with a wireframe coffee bean',
-    tags: ['three.js wireframe bean', 'Dark → cream → dark', 'Odometer counters'],
-  },
-  {
-    n: 2,
-    slug: 'motion',
-    name: 'Motion',
-    kit: 'Hobro-style kit',
-    line: 'Cinematic and loud. A thank-you preloader, custom cursor and a draggable coffee strip.',
-    img: `${base}previews/motion.jpg`,
-    alt: 'Preview: black hero, huge uppercase headline and outlined italic thanks',
-    tags: ['Custom cursor', 'Scrubbed statement', 'Momentum drag'],
-  },
-  {
-    n: 3,
-    slug: 'editorial',
-    name: 'Editorial',
-    kit: 'Editorial WebGL kit',
-    line: 'A print art-director’s grid. Giant condensed type over a three.js halftone field.',
-    img: `${base}previews/editorial.jpg`,
-    alt: 'Preview: blue-black page with a four-column grid and a giant THANKS headline',
-    tags: ['Visible 4-column grid', 'WebGL halftone', 'Flip layout morph'],
-  },
-  {
-    n: 4,
-    slug: 'sunny',
-    name: 'Sunny',
-    kit: 'Paput-style kit',
-    line: 'Flat colour bands, pill-shaped everything and heavy capitals. Friendly and local.',
-    img: `${base}previews/sunny.jpg`,
-    alt: 'Preview: cobalt hero with a bean pattern, a yellow coffee bag and a red cup',
-    tags: ['Pills + flat colour', 'Rotated marquee', 'Lowest motion'],
-  },
-];
-
-const rows: [string, string, string, string, string][] = [
-  ['Mood', 'Calm instrument', 'Cinematic agency', 'Print art-director', 'Beach-bar loud'],
-  ['Ground', 'Near-black, then cream, then near-black', 'True black', 'Cool blue-black', 'Cream with cobalt, sun and tomato bands'],
-  ['Display type', 'Ultralight serif', 'Heavy caps + outlined italic serif', 'Giant condensed caps', 'Heavy caps in pills'],
-  ['Signature', 'Wireframe bean, registration marks', 'Preloader, cursor, burst glyph', 'Column grid, curtain intro, halftone', 'Rotated marquee, flat stickers'],
-  ['Libraries', 'GSAP, Lenis, three.js', 'GSAP, Lenis', 'GSAP + Flip, Lenis, three.js', 'GSAP (light)'],
-  ['Motion load', 'High', 'Highest', 'High', 'Low'],
-  ['Strongest when', 'You want premium and design-led', 'You want brand and culture to lead', 'You want type and craft to lead', 'You want warm, local and approachable'],
-  ['Watch out for', 'Fluid root sizing overrides browser font size', 'Heavy motion; hidden native cursor on desktop', 'Condensed type needs tracking; WebGL cost', 'Needs real product photos to shine'],
-];
+const byId = Object.fromEntries(categories.map((c) => [c.id, c]));
+const patches = [
+  ['p-a', 'bedding'], ['p-b', 'cushions'], ['p-c', 'throws'], ['p-d', 'rugs'],
+  ['p-e', 'lighting'], ['p-h', 'storage'], ['p-f', 'furniture'], ['p-g', 'decor'],
+] as const;
 ---
+<Base>
+  <section class="hero">
+    <div class="wrap">
+      <h1>{hero.headline}</h1>
+      <p class="lede">{hero.lede}</p>
+      <div class="actions">
+        <a class="btn" href="/contact/">{hero.primary}</a>
+        <a class="btn-line" href="/how-we-work/">{hero.secondary}</a>
+      </div>
+      <div class="hero-board"><Board /></div>
+    </div>
+  </section>
 
-<Base title="Gratia · Pick a direction" themeColor="#f4f5f6" bodyClass="pk">
-  <a class="skip-link" href="#main">Skip to content</a>
+  <section class="section" aria-labelledby="goods-h">
+    <div class="wrap">
+      <div class="head-row">
+        <div class="head wide"><h2 id="goods-h">Two kinds of home goods, one team.</h2></div>
+        <p class="lede">Textiles and hard goods usually need two agents. Here the same merchandiser follows both, so a bed, its cushions and the lamp beside it arrive on one schedule.</p>
+      </div>
+      <div class="patch-grid">
+        {patches.map(([cls, id]) => (
+          <a class={`patch ${cls}`} href={`/products/#${id}`}>
+            <Swatch kind={byId[id].swatch} />
+            <span class="cap"><b>{byId[id].name}</b><span>{byId[id].items}</span></span>
+          </a>
+        ))}
+      </div>
+      <p style="margin-top:24px"><a class="btn-line" href="/products/">All categories, materials and lead times</a></p>
+    </div>
+  </section>
 
-  <header class="top">
-    <p class="top__brand">{brand.name} <span>design samples</span></p>
-    <p class="top__note">Placeholder brand, invented copy</p>
-  </header>
-
-  <main id="main">
-    <section class="intro">
-      <h1>Four directions for Gratia.</h1>
-      <p class="intro__lede">
-        One brand, one set of copy, the same sections on every page. Only the design changes, so the comparison is fair.
-        Open each one at desktop size and on your phone, then pick the one to build on.
-      </p>
-      <p class="intro__aside">
-        Gratia here is a made-up coffee roaster. Every name, price, address and number lives in one file
-        (<code>src/content/gratia.ts</code>) and is placeholder content.
-      </p>
-    </section>
-
-    <section class="samples" aria-label="Design samples">
-      <ol class="samples__grid">
-        {samples.map((s) => (
-          <li class="sample">
-            <a class="sample__link" href={`${base}${s.slug}/`}>
-              <span class="sample__shot">
-                <img src={s.img} alt={s.alt} width="1200" height="750" loading={s.n > 2 ? 'lazy' : 'eager'} decoding="async" />
-              </span>
-              <span class="sample__meta">
-                <span class="sample__n">{s.n}</span>
-                <span class="sample__text">
-                  <span class="sample__name">{s.name}</span>
-                  <span class="sample__kit">{s.kit}</span>
-                  <span class="sample__line">{s.line}</span>
-                </span>
-                <span class="sample__open">Open
-                  <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" focusable="false"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                </span>
-              </span>
-            </a>
-            <ul class="sample__tags">
-              {s.tags.map((t) => <li>{t}</li>)}
-            </ul>
+  <section class="section on-dark" aria-labelledby="gates-h">
+    <div class="wrap">
+      <div class="head-row">
+        <div class="head wide"><h2 id="gates-h">Eight gates. Nothing moves until one is signed.</h2></div>
+        <p class="lede">A gate has a named signer and something it unlocks. If a gate is not signed, the next step does not start, and you hear about it that day.</p>
+      </div>
+      <ol class="timetable">
+        {gates.map((g, n) => (
+          <li class="gate-row">
+            <div class="gate-id"><span class="gate-code">{g.code}</span><span class="lamps" aria-hidden="true">{gates.map((_, i) => <i class={i <= n ? 'on' : ''}></i>)}</span></div>
+            <div><h3>{g.name}</h3><p>{g.text}</p></div>
+            <dl class="g-sign"><dt>Signed by</dt><dd>{g.signer}</dd></dl>
+            <dl class="g-unlock"><dt>Unlocks</dt><dd>{g.unlocks}</dd></dl>
           </li>
         ))}
       </ol>
-    </section>
+      <p style="margin-top:32px"><a class="btn" href="/how-we-work/">Build your gate calendar</a></p>
+    </div>
+  </section>
 
-    <section class="compare" aria-labelledby="compare-h">
-      <h2 id="compare-h">Side by side</h2>
-      <div class="compare__scroll" tabindex="0" role="region" aria-label="Comparison table, scrolls sideways on small screens">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col"><span class="sr-only">Attribute</span></th>
-              {samples.map((s) => <th scope="col">{s.n} · {s.name}</th>)}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr>
-                <th scope="row">{r[0]}</th>
-                {r.slice(1).map((c) => <td>{c}</td>)}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+  <section class="section" aria-labelledby="proof-h">
+    <div class="wrap two">
+      <div class="head wide">
+        <h2 id="proof-h">We check the paper and the product.</h2>
+        <p class="lede">Certificates are verified at the factory gate, not copied from a brochure. Test reports travel with your shipping documents, and an inspection that fails stops the shipment.</p>
+        <p><a class="btn-line" href="/sustainability/">Compliance and sustainability</a></p>
       </div>
-    </section>
-
-    <section class="notes" aria-labelledby="notes-h">
-      <h2 id="notes-h">Good to know</h2>
-      <ul>
-        <li>Each sample plays its intro once per browser session. Add <code>?intro</code> to the URL to see it again.</li>
-        <li>Every sample honours <code>prefers-reduced-motion</code>: no intro, no smooth scroll, final states shown.</li>
-        <li>The small pager at the screen edge is review chrome. Remove <code>SampleSwitcher</code> from <code>Base.astro</code> once a direction is chosen.</li>
-        <li>Built with Astro, GSAP (ScrollTrigger, SplitText, Flip, Draggable), Lenis and three.js. Fonts are self-hosted.</li>
+      <ul class="commit">
+        <li><div><h3>Verified before you hear a name</h3><p>Audit status and certificates are checked at G2, before a supplier reaches your shortlist.</p></div></li>
+        <li><div><h3>Inspected on the line, not after it</h3><p>In-line checks at G6 mean a defect is fixed in production, not argued about in port.</p></div></li>
+        <li><div><h3>Documents that agree with each other</h3><p>Invoice, packing list and test reports are cross-checked at G8, so customs has nothing to query.</p></div></li>
       </ul>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <footer class="foot">
-    <p>{brand.placeholderNote}</p>
-  </footer>
+  <section class="close on-dark" aria-labelledby="close-h">
+    <div class="wrap">
+      <div class="head wide"><h2 id="close-h">Next departure: your brief.</h2></div>
+      <p class="lede" style="margin-top:16px">Send a spec, a drawing or a reference photo. We reply within one working day with whether we can help and what we need.</p>
+      <div class="board" role="group" aria-label="Send a brief">
+        <div class="close-row">
+          <span class="ft" style="max-width:20ch">Brief received. Gate one opens today.</span>
+          <a class="btn" href="/contact/">Send a sourcing brief</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </Base>

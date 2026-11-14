@@ -1,0 +1,106 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, categories } from '../content/site';
+---
+<Base title="Send a sourcing brief" description="Send Gratia Sourcing a spec, drawing or reference. We reply within one working day.">
+  <section class="page-head wrap">
+    <h1>Open gate one.</h1>
+    <p class="lede">Tell us what you want made, roughly how many, and by when. A reference photo is enough to start. We reply within one working day.</p>
+  </section>
+
+  <section class="wrap section-tight two">
+    <form class="form" id="brief" novalidate>
+      <div class="summary" id="summary" role="alert" tabindex="-1" aria-labelledby="summary-h" hidden><h2 id="summary-h">There is a problem</h2><ul id="summary-list"></ul></div>
+      <div class="grid2">
+        <div><label for="name">Your name</label><input class="field" id="name" name="name" autocomplete="name" required /></div>
+        <div><label for="company">Company</label><input class="field" id="company" name="company" autocomplete="organization" required /></div>
+      </div>
+      <div class="grid2">
+        <div><label for="email">Work email</label><input class="field" id="email" name="email" type="email" autocomplete="email" required /></div>
+        <div><label for="cat">Category</label>
+          <select class="field" id="cat" name="cat" required>
+            <option value="">Choose one</option>
+            {categories.map((c) => <option value={c.id}>{c.name}</option>)}
+            <option value="other">Something else</option>
+          </select>
+        </div>
+      </div>
+      <div><label for="brief-text">What should we make?</label><textarea class="field" id="brief-text" name="brief" required aria-describedby="brief-help"></textarea><p class="help" id="brief-help">Materials, size, finish, a link to a reference. Rough is fine.</p></div>
+      <div class="grid2">
+        <div><label for="qty">Target volume and price <span class="opt">(optional)</span></label><input class="field" id="qty" name="qty" /></div>
+        <div><label for="need">Needed ex-factory by <span class="opt">(optional)</span></label><input class="field" id="need" name="need" type="date" /></div>
+      </div>
+      <div><button class="btn" type="submit">Send brief</button></div>
+      <div class="notice" id="done" role="status" tabindex="-1" hidden><b>Brief received on this page only.</b> This demo form is not connected to an inbox yet, so nothing was sent. Please email <a href={`mailto:${site.email}`}>{site.email}</a> in the meantime.</div>
+    </form>
+
+    <dl class="contact-list">
+      <div><dt>Email</dt><dd><a href={`mailto:${site.email}`}>{site.email}</a></dd></div>
+      <div><dt>Phone</dt><dd><a href={`tel:${site.phone.replace(/\s/g, '')}`}>{site.phone}</a></dd></div>
+      <div><dt>Office</dt><dd>{site.address.join(', ')}</dd></div>
+      <div><dt>Hours</dt><dd>{site.hours}</dd></div>
+      <div><dt>What happens next</dt><dd>We reply within a working day, tell you whether we can help, and list what we need to open gate one.</dd></div>
+    </dl>
+  </section>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#brief')!;
+  const done = document.querySelector<HTMLElement>('#done')!;
+  const summary = document.querySelector<HTMLElement>('#summary')!;
+  const list = document.querySelector<HTMLElement>('#summary-list')!;
+  const labels: Record<string, string> = { name: 'your name', company: 'your company', email: 'a work email', cat: 'a category', 'brief-text': 'what you want made' };
+  const fields = ['name', 'company', 'email', 'cat', 'brief-text'].map((id) => form.querySelector<HTMLInputElement>('#' + id)!);
+
+  const check = (f: HTMLInputElement) => {
+    const v = f.value.trim();
+    if (!v) return `Add ${labels[f.id]} so we can reply.`;
+    if (f.type === 'email' && !/^\S+@\S+\.\S+$/.test(v)) return 'That email address looks incomplete. Check it and try again.';
+    return '';
+  };
+  const clear = (f: HTMLInputElement) => {
+    f.removeAttribute('aria-invalid');
+    f.parentElement?.querySelector('.err')?.remove();
+    f.setAttribute('aria-describedby', (f.getAttribute('aria-describedby') || '').split(' ').filter((x) => x && !x.endsWith('-err')).join(' '));
+    if (!f.getAttribute('aria-describedby')) f.removeAttribute('aria-describedby');
+  };
+  const fail = (f: HTMLInputElement, text: string) => {
+    f.setAttribute('aria-invalid', 'true');
+    const p = document.createElement('p');
+    p.className = 'err';
+    p.id = f.id + '-err';
+    p.textContent = text;
+    f.setAttribute('aria-describedby', [f.getAttribute('aria-describedby'), p.id].filter(Boolean).join(' '));
+    f.parentElement?.appendChild(p);
+  };
+  // Validate when a field is left, and clear the message as soon as it is fixed.
+  fields.forEach((f) => {
+    f.addEventListener('blur', () => { if (f.value || f.hasAttribute('aria-invalid')) { clear(f); const m = check(f); if (m) fail(f, m); } });
+    f.addEventListener('input', () => { if (f.hasAttribute('aria-invalid') && !check(f)) clear(f); });
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    done.hidden = true;
+    list.textContent = '';
+    let first: HTMLInputElement | null = null;
+    fields.forEach((f) => {
+      clear(f);
+      const m = check(f);
+      if (!m) return;
+      fail(f, m);
+      first ??= f;
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = '#' + f.id;
+      a.textContent = m;
+      a.addEventListener('click', (ev) => { ev.preventDefault(); f.focus(); });
+      li.appendChild(a);
+      list.appendChild(li);
+    });
+    if (first) { summary.hidden = false; summary.focus(); return; }
+    summary.hidden = true;
+    done.hidden = false;
+    done.focus();
+  });
+</script>

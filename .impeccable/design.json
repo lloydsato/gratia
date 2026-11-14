@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-14T09:14:03.351197Z",
+  "title": "Design System: Gratia Sourcing",
+  "extensions": {
+    "colorMeta": {
+      "amber": {
+        "role": "primary",
+        "displayName": "Gate Lamp Amber",
+        "canonical": "#ffb400",
+        "tonalRamp": [
+          "#40310c",
+          "#78590e",
+          "#b7840b",
+          "#fbb101",
+          "#f5c040",
+          "#f1cf7f",
+          "#f2e1b8",
+          "#faf5eb"
+        ]
+      },
+      "steel": {
+        "role": "neutral",
+        "displayName": "Brushed Steel",
+        "canonical": "#d4d7d9",
+        "tonalRamp": [
+          "#252728",
+          "#404447",
+          "#5b6266",
+          "#767f85",
+          "#959ca0",
+          "#b4b9bb",
+          "#d3d5d7",
+          "#f2f2f3"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Gauge Ink",
+        "canonical": "#121417",
+        "tonalRamp": [
+          "#232629",
+          "#3d424a",
+          "#565e6b",
+          "#6e7b8d",
+          "#9099a6",
+          "#b1b7bf",
+          "#d2d4d9",
+          "#f1f2f3"
+        ]
+      },
+      "flap": {
+        "role": "neutral",
+        "displayName": "Matte Flap",
+        "canonical": "#0f1113",
+        "tonalRamp": [
+          "#232629",
+          "#3d434a",
+          "#56616b",
+          "#6f7e8c",
+          "#909ba5",
+          "#b1b8bf",
+          "#d2d5d9",
+          "#f1f2f3"
+        ]
+      },
+      "flap-ink": {
+        "role": "neutral",
+        "displayName": "Flap Ink",
+        "canonical": "#f2f2ee",
+        "tonalRamp": [
+          "#2a2a23",
+          "#4a4a3c",
+          "#6c6c55",
+          "#8e8e6d",
+          "#a7a78f",
+          "#c0c0b0",
+          "#d9d9d1",
+          "#f3f3f1"
+        ]
+      },
+      "hold-red": {
+        "role": "semantic",
+        "displayName": "Hold Red",
+        "canonical": "#ff7a66",
+        "tonalRamp": [
+          "#40130c",
+          "#781c0e",
+          "#b7210b",
+          "#fb2101",
+          "#f55840",
+          "#f18e7f",
+          "#f2c0b8",
+          "#faedeb"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Home headline only."
+      },
+      "flap": {
+        "displayName": "Flap",
+        "purpose": "Board cells: status, gate, date. One box per character."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Reading text up to 68ch."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-out-expo",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Button lift and patch scale."
+      },
+      {
+        "name": "flap-cascade",
+        "value": "4 to 8 glyph cycles at 50ms, 22ms stagger per character, 90ms per row",
+        "purpose": "The one authored moment; skipped under reduced motion."
+      },
+      {
+        "name": "lamp-pulse",
+        "value": "2.4s ease-in-out opacity 1 to 0.35",
+        "purpose": "Current gate lamp."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "nav",
+        "value": "960px"
+      },
+      {
+        "name": "md",
+        "value": "860px"
+      },
+      {
+        "name": "patch",
+        "value": "760px"
+      },
+      {
+        "name": "board-stack",
+        "value": "560px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one action: send a sourcing brief.",
+      "html": "<a class=\"ds-btn\" href=\"#\">SEND A SOURCING BRIEF</a>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;min-height:48px;padding:0 24px;background:#ffb400;color:#0f1113;border:2px solid #0f1113;border-radius:3px;font:700 1.25rem \"Barlow Condensed\",Arial Narrow,sans-serif;letter-spacing:.08em;text-decoration:none}.ds-btn:hover{background:#ffc633;transform:translateY(-1px)}.ds-btn:focus-visible{outline:3px solid #121417;outline-offset:3px}"
+    },
+    {
+      "name": "Flap Cell Wordmark",
+      "kind": "custom",
+      "refersTo": "board",
+      "description": "Brand wordmark and big type as split-line flap cells.",
+      "html": "<span class=\"ds-flaps\"><span>G</span><span>R</span><span>A</span><span>T</span><span>I</span><span>A</span></span>",
+      "css": ".ds-flaps{display:inline-flex;gap:.08em;font:700 2rem \"Barlow Condensed\",Arial Narrow,sans-serif}.ds-flaps span{position:relative;display:inline-grid;place-items:center;width:.78em;height:1.1em;background:#0f1113;color:#f2f2ee;border-radius:2px}.ds-flaps span:after{content:\"\";position:absolute;left:0;right:0;top:50%;height:1px;background:#000}"
+    },
+    {
+      "name": "Gate Lamps",
+      "kind": "custom",
+      "refersTo": "board",
+      "description": "Eight lamps; signed gates amber, current gate pulsing.",
+      "html": "<span class=\"ds-lamps\"><i class=\"on\"></i><i class=\"on\"></i><i class=\"on\"></i><i class=\"now\"></i><i></i><i></i><i></i><i></i></span>",
+      "css": ".ds-lamps{display:inline-flex;gap:4px;padding:12px;background:#0f1113}.ds-lamps i{width:14px;height:6px;background:#23272b;border-radius:1px}.ds-lamps i.on,.ds-lamps i.now{background:#ffb400}.ds-lamps i.now{animation:ds-p 2.4s ease-in-out infinite}@keyframes ds-p{50%{opacity:.35}}"
+    },
+    {
+      "name": "Board Row",
+      "kind": "custom",
+      "refersTo": "board",
+      "description": "One live order: goods, gate, status.",
+      "html": "<div class=\"ds-row\"><span class=\"ds-t\">LINEN DUVET SET</span><span class=\"ds-t\">LAB DIP</span><span class=\"ds-t ds-w\">&#9679; WATCH</span></div>",
+      "css": ".ds-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px;padding:16px;background:#0f1113;color:#f2f2ee;border-top:1px solid #23272b}.ds-t{font:600 1.25rem \"Barlow Condensed\",Arial Narrow,sans-serif;text-transform:uppercase}.ds-w{color:#ffb400}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Form input on steel.",
+      "html": "<label class=\"ds-l\" for=\"x\">WORK EMAIL</label><input class=\"ds-f\" id=\"x\" type=\"email\">",
+      "css": ".ds-l{display:block;font:600 1.05rem \"Barlow Condensed\",Arial Narrow,sans-serif;letter-spacing:.12em;margin-bottom:6px}.ds-f{width:100%;min-height:48px;padding:10px 14px;background:#e5e7e8;color:#121417;border:2px solid #121417;border-radius:3px;font:inherit}.ds-f:focus-visible{outline:3px solid #8a5d00;outline-offset:2px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Order Board",
+    "overview": "A buying house sells control, so the site is a time-and-action board: fixed columns, rows as live orders, and flaps that cascade as an order clears a signed gate. Steel ground, matte-black boards, amber lamps; all other colour comes from authored material swatches.",
+    "keyCharacteristics": [
+      "Fixed-column ruled rows with split-line flap cells",
+      "Light steel ground, black board fields, amber used sparingly",
+      "Colour from materials, never chrome",
+      "One authored motion with a pause control"
+    ],
+    "rules": [
+      {
+        "name": "The One Lamp Rule",
+        "body": "Amber marks only the gate in progress and the action to take.",
+        "section": "colors"
+      },
+      {
+        "name": "The Announce/Read Rule",
+        "body": "Condensed caps announce; the grotesque reads. Never set paragraphs in the condensed face.",
+        "section": "typography"
+      }
+    ],
+    "dos": [
+      "Do keep columns fixed and let only characters move.",
+      "Do pair every status colour with a word and a marker shape.",
+      "Do label invented data as SAMPLE DATA."
+    ],
+    "donts": [
+      "Don't use amber decoratively.",
+      "Don't add shadows, blur, gradients or glass.",
+      "Don't invent clients, certifications or testimonials."
+    ]
+  }
+}

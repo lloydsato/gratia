@@ -1,0 +1,8 @@
+---
+interface Props { text: string; class?: string }
+const { text, class: className = '' } = Astro.props;
+const chars = [...text.toUpperCase()];
+---
+<span class={`flaps ${className}`} aria-hidden="true">
+  {chars.map((c) => (c === ' ' ? <span style="width:0.35em"></span> : <span class="cell">{c}</span>))}
+</span>
