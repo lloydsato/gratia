@@ -1,11 +1,10 @@
 import { defineConfig } from 'astro/config';
 
-// GitHub Pages project site: https://lloydsato.github.io/gratia/
-// For a custom domain at the root, set site to 'https://yourdomain.com' and base to '/'
-// (and add public/CNAME). All internal links go through withBase() so nothing else changes.
+// Static output, served from the domain root (Vercel or any static host).
+// Add `site: 'https://your-domain'` once the production URL is known.
+// If you ever host under a sub-path, set `base` (e.g. '/gratia/'): every internal
+// link already goes through withBase() in src/utils/url.ts, so nothing else changes.
 export default defineConfig({
-  site: 'https://lloydsato.github.io',
-  base: '/gratia/',
   output: 'static',
   trailingSlash: 'always',
   build: { inlineStylesheets: 'auto' },
