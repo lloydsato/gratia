@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../utils/url';
 import Base from '../layouts/Base.astro';
 import Board from '../components/Board.astro';
 import Swatch from '../components/Swatch.astro';
@@ -17,8 +18,8 @@ const patches = [
       <h1>{hero.headline}</h1>
       <p class="lede">{hero.lede}</p>
       <div class="actions">
-        <a class="btn" href="/contact/">{hero.primary}</a>
-        <a class="btn-line" href="/how-we-work/">{hero.secondary}</a>
+        <a class="btn" href={withBase('/contact/')}>{hero.primary}</a>
+        <a class="btn-line" href={withBase('/how-we-work/')}>{hero.secondary}</a>
       </div>
       <div class="hero-board"><Board /></div>
     </div>
@@ -32,13 +33,13 @@ const patches = [
       </div>
       <div class="patch-grid">
         {patches.map(([cls, id]) => (
-          <a class={`patch ${cls}`} href={`/products/#${id}`}>
+          <a class={`patch ${cls}`} href={withBase(`/products/#${id}`)}>
             <Swatch kind={byId[id].swatch} />
             <span class="cap"><b>{byId[id].name}</b><span>{byId[id].items}</span></span>
           </a>
         ))}
       </div>
-      <p style="margin-top:24px"><a class="btn-line" href="/products/">All categories, materials and lead times</a></p>
+      <p style="margin-top:24px"><a class="btn-line" href={withBase('/products/')}>All categories, materials and lead times</a></p>
     </div>
   </section>
 
@@ -58,7 +59,7 @@ const patches = [
           </li>
         ))}
       </ol>
-      <p style="margin-top:32px"><a class="btn" href="/how-we-work/">Build your gate calendar</a></p>
+      <p style="margin-top:32px"><a class="btn" href={withBase('/how-we-work/')}>Build your gate calendar</a></p>
     </div>
   </section>
 
@@ -67,7 +68,7 @@ const patches = [
       <div class="head wide">
         <h2 id="proof-h">We check the paper and the product.</h2>
         <p class="lede">Certificates are verified at the factory gate, not copied from a brochure. Test reports travel with your shipping documents, and an inspection that fails stops the shipment.</p>
-        <p><a class="btn-line" href="/sustainability/">Compliance and sustainability</a></p>
+        <p><a class="btn-line" href={withBase('/sustainability/')}>Compliance and sustainability</a></p>
       </div>
       <ul class="commit">
         <li><div><h3>Verified before you hear a name</h3><p>Audit status and certificates are checked at G2, before a supplier reaches your shortlist.</p></div></li>
@@ -84,7 +85,7 @@ const patches = [
       <div class="board" role="group" aria-label="Send a brief">
         <div class="close-row">
           <span class="ft" style="max-width:20ch">Brief received. Gate one opens today.</span>
-          <a class="btn" href="/contact/">Send a sourcing brief</a>
+          <a class="btn" href={withBase('/contact/')}>Send a sourcing brief</a>
         </div>
       </div>
     </div>

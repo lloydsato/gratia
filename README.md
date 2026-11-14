@@ -14,6 +14,15 @@ npm run build    # static site in dist/
 
 Node 22.23+. Astro static output; host `dist/` anywhere. Set `site` (and `base` if under a sub-path) in `astro.config.mjs`.
 
+## Deploy to GitHub Pages
+
+`.github/workflows/deploy.yml` builds the site and publishes `dist/` on every push to `main`.
+
+1. In the repo: **Settings, Pages, Build and deployment, Source: GitHub Actions** (one-time).
+2. Push to `main`. The site appears at `https://lloydsato.github.io/gratia/`.
+
+`astro.config.mjs` sets `site` and `base: '/gratia/'`, and every internal link goes through `withBase()` (`src/utils/url.ts`). To use a custom domain at the root instead: set `site` to the domain, `base` to `'/'`, add `public/CNAME` with the domain, and point DNS at GitHub.
+
 ## Pages
 
 `/` home · `/services/` · `/how-we-work/` (gate calendar calculator) · `/products/` · `/sustainability/` (compliance) · `/about/` · `/contact/` · `/404`

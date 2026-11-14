@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../utils/url';
 import Base from '../layouts/Base.astro';
 import Swatch from '../components/Swatch.astro';
 import { categories } from '../content/site';
@@ -39,7 +40,7 @@ const groups = [
       <div class="head"><h2>Not on the list?</h2></div>
       <div>
         <p class="lede">If it is a home product made in India, send the brief. We will say plainly whether we can source it well.</p>
-        <p style="margin-top:24px"><a class="btn" href="/contact/">Send a sourcing brief</a></p>
+        <p style="margin-top:24px"><a class="btn" href={withBase('/contact/')}>Send a sourcing brief</a></p>
       </div>
     </div>
   </section>
