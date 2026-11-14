@@ -1,23 +1,24 @@
 ---
+import { withBase } from '../utils/url';
 import { nav, site } from '../content/site';
 import Flaps from './Flaps.astro';
 const path = Astro.url.pathname;
-const current = (href: string) => (path === href || path.startsWith(href) ? 'page' : undefined);
+const current = (href: string) => { const h = withBase(href); return path === h || path.startsWith(h) ? 'page' : undefined; };
 ---
 <header class="site-header">
   <div class="wrap bar">
-    <a class="brand" href="/">
+    <a class="brand" href={withBase('/')}>
       <span class="vh">Gratia </span><Flaps text="GRATIA" />
       <span class="sub">Sourcing</span>
     </a>
     <nav class="nav" aria-label="Main">
-      {nav.map((n) => <a class="link" href={n.href} aria-current={current(n.href)}>{n.label}</a>)}
-      <a class="btn sm" href="/contact/">Send a brief</a>
+      {nav.map((n) => <a class="link" href={withBase(n.href)} aria-current={current(n.href)}>{n.label}</a>)}
+      <a class="btn sm" href={withBase('/contact/')}>Send a brief</a>
       <details class="menu">
         <summary>Menu</summary>
         <div class="menu-panel">
-          {nav.map((n) => <a href={n.href} aria-current={current(n.href)}>{n.label}</a>)}
-          <a href="/contact/">Send a brief</a>
+          {nav.map((n) => <a href={withBase(n.href)} aria-current={current(n.href)}>{n.label}</a>)}
+          <a href={withBase('/contact/')}>Send a brief</a>
         </div>
       </details>
     </nav>

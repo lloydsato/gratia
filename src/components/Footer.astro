@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../utils/url';
 import { nav, site, about } from '../content/site';
 import Flaps from './Flaps.astro';
 ---
@@ -12,8 +13,8 @@ import Flaps from './Flaps.astro';
       <div>
         <h2>Site</h2>
         <ul>
-          {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
-          <li><a href="/contact/">Send a brief</a></li>
+          {nav.map((n) => <li><a href={withBase(n.href)}>{n.label}</a></li>)}
+          <li><a href={withBase('/contact/')}>Send a brief</a></li>
         </ul>
       </div>
       <div>

@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../utils/url';
 import Base from '../layouts/Base.astro';
 import { gates } from '../content/site';
 ---
@@ -61,7 +62,7 @@ import { gates } from '../content/site';
 
   <section class="close on-dark" style="padding-top:0">
     <div class="wrap">
-      <div class="board"><div class="close-row"><span class="ft" style="max-width:22ch">Ready to open gate one?</span><a class="btn" href="/contact/">Send a sourcing brief</a></div></div>
+      <div class="board"><div class="close-row"><span class="ft" style="max-width:22ch">Ready to open gate one?</span><a class="btn" href={withBase('/contact/')}>Send a sourcing brief</a></div></div>
     </div>
   </section>
 </Base>

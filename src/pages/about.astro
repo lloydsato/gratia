@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../utils/url';
 import Base from '../layouts/Base.astro';
 import Flaps from '../components/Flaps.astro';
 import { about, site } from '../content/site';
@@ -35,7 +36,7 @@ import { about, site } from '../content/site';
           <tbody>{about.markets.map((m) => (<tr><td><span class="ft">{m}</span></td><td><span class="st"><span class="ft">Serving</span></span></td></tr>))}</tbody>
         </table>
       </div>
-      <p style="margin-top:32px"><a class="btn" href="/contact/">Send a sourcing brief</a></p>
+      <p style="margin-top:32px"><a class="btn" href={withBase('/contact/')}>Send a sourcing brief</a></p>
     </div>
   </section>
 </Base>
