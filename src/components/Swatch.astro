@@ -1,0 +1,186 @@
+---
+/**
+ * Authored material swatches (SVG, no photography exist yet).
+ * Provenance: drawn by hand in code for this project; no third-party assets.
+ * Replace with real product photography when it exists.
+ */
+import type { SwatchKind } from '../content/site';
+
+interface Props {
+  kind: SwatchKind;
+  class?: string;
+}
+const { kind, class: className = '' } = Astro.props;
+
+// Unique ids so several swatches of one kind can share a page.
+let counter = (globalThis as any).__swatchCounter ?? 0;
+(globalThis as any).__swatchCounter = ++counter;
+const id = `sw${counter}`;
+---
+
+<svg
+  class={`swatch ${className}`}
+  viewBox="0 0 120 120"
+  preserveAspectRatio="xMidYMid slice"
+  aria-hidden="true"
+  focusable="false"
+>
+  {kind === 'linen' && (
+    <>
+      <defs>
+        <pattern id={id} width="4" height="4" patternUnits="userSpaceOnUse">
+          <rect width="4" height="4" fill="#86a0b8" />
+          <rect width="4" height="1.3" fill="#a9bdd0" />
+          <rect width="1.3" height="4" fill="#6f879f" />
+        </pattern>
+      </defs>
+      <rect width="120" height="120" fill={`url(#${id})`} />
+      <path d="M0 23h38M52 47h68M0 71h54M70 95h50M12 112h40" stroke="#4f677e" stroke-width=".7" opacity=".4" />
+    </>
+  )}
+  {kind === 'twill' && (
+    <>
+      <defs>
+        <pattern id={id} width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="8" height="8" fill="#2f5d50" />
+          <rect width="3" height="8" fill="#3f7565" />
+          <rect x="5" width="1" height="8" fill="#234a40" />
+        </pattern>
+      </defs>
+      <rect width="120" height="120" fill={`url(#${id})`} />
+    </>
+  )}
+  {kind === 'ikat' && (
+    <>
+      <rect width="120" height="120" fill="#1f2f5c" />
+      {[0, 1, 2].map((r) => [0, 1, 2].map((c) => (
+        <g transform={`translate(${c * 40 + 20} ${r * 40 + 20})`}>
+          <path d="M0-17 17 0 0 17-17 0Z" fill="#f1ece0" />
+          <path d="M0-11 11 0 0 11-11 0Z" fill="#b5402f" />
+          <path d="M0-5 5 0 0 5-5 0Z" fill="#1f2f5c" />
+          <path d="M-22-2h-5m5 4h-6M22-2h5m-5 4h6M-2-22v-5m4 5v-6M-2 22v5m4-5v6" stroke="#f1ece0" stroke-width="1.6" />
+        </g>
+      )))}
+    </>
+  )}
+  {kind === 'blockprint' && (
+    <>
+      <rect width="120" height="120" fill="#d9a526" />
+      {[0, 1, 2, 3].map((r) => [0, 1, 2, 3].map((c) => (
+        <g transform={`translate(${c * 30 + (r % 2) * 15 - 0} ${r * 30 + 15})`} fill="#1f2f5c">
+          <circle r="3.2" />
+          {[0, 60, 120, 180, 240, 300].map((a) => (
+            <ellipse cx="0" cy="-8" rx="2.6" ry="5" transform={`rotate(${a})`} />
+          ))}
+        </g>
+      )))}
+    </>
+  )}
+  {kind === 'kantha' && (
+    <>
+      <rect width="120" height="120" fill="#5f7fa0" />
+      {Array.from({ length: 12 }, (_, i) => (
+        <path
+          d={`M0 ${i * 10 + 5}q7.5-4 15 0t15 0 15 0 15 0 15 0 15 0 15 0 15 0`}
+          fill="none"
+          stroke="#efe6d2"
+          stroke-width="1.6"
+          stroke-dasharray="5 3.5"
+          stroke-dashoffset={i % 2 ? 4 : 0}
+        />
+      ))}
+      <rect y="0" width="120" height="4" fill="#47688a" opacity=".5" />
+    </>
+  )}
+  {kind === 'dhurrie' && (
+    <>
+      <rect width="120" height="120" fill="#efe6d2" />
+      <rect y="0" width="120" height="16" fill="#1f2f5c" />
+      <rect y="104" width="120" height="16" fill="#1f2f5c" />
+      <path d="M0 60 15 36 30 60 45 36 60 60 75 36 90 60 105 36 120 60 105 84 90 60 75 84 60 60 45 84 30 60 15 84Z" fill="#b5402f" />
+      <path d="M0 60 15 48 30 60 45 48 60 60 75 48 90 60 105 48 120 60 105 72 90 60 75 72 60 60 45 72 30 60 15 72Z" fill="#d9a526" />
+      <rect y="20" width="120" height="3" fill="#b5402f" />
+      <rect y="97" width="120" height="3" fill="#b5402f" />
+    </>
+  )}
+  {kind === 'jute' && (
+    <>
+      <defs>
+        <pattern id={id} width="8" height="8" patternUnits="userSpaceOnUse">
+          <rect width="8" height="8" fill="#b8935a" />
+          <path d="M0 2h8M0 6h8" stroke="#cfae78" stroke-width="2" />
+          <path d="M2 0v8M6 0v8" stroke="#94723f" stroke-width="1.6" />
+        </pattern>
+      </defs>
+      <rect width="120" height="120" fill={`url(#${id})`} />
+    </>
+  )}
+  {kind === 'rattan' && (
+    <>
+      <defs>
+        <pattern id={id} width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="12" height="12" fill="#c99a55" />
+          <rect width="12" height="2.4" fill="#e1b977" />
+          <rect y="6" width="12" height="2.4" fill="#a67a3c" />
+          <rect x="6" width="2.4" height="12" fill="#e1b977" opacity=".8" />
+        </pattern>
+      </defs>
+      <rect width="120" height="120" fill={`url(#${id})`} />
+    </>
+  )}
+  {kind === 'brass' && (
+    <>
+      <rect width="120" height="120" fill="#b88a2b" />
+      {[52, 42, 32, 22, 12].map((r, i) => (
+        <circle cx="60" cy="60" r={r} fill={i % 2 ? '#c9a043' : '#a47a22'} />
+      ))}
+      <circle cx="60" cy="60" r="5" fill="#e6c466" />
+      {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
+        <circle cx={14 + (i % 4) * 30 + (i > 3 ? 15 : 0)} cy={i > 3 ? 108 : 12} r="3.5" fill="#8a6418" opacity=".7" />
+      ))}
+    </>
+  )}
+  {kind === 'glaze' && (
+    <>
+      <rect width="120" height="120" fill="#efece4" />
+      <path d="M0 0h120v58q-8 14-16 0t-16 8-16-6-16 12-16-10-16 8-16-8-8 0Z" fill="#26468f" />
+      <path d="M12 58v30M52 64v44M92 66v20" stroke="#26468f" stroke-width="7" stroke-linecap="round" />
+      <ellipse cx="12" cy="90" rx="5" ry="4" fill="#26468f" />
+      <ellipse cx="52" cy="110" rx="5" ry="4" fill="#26468f" />
+      {[[20, 20], [44, 34], [70, 18], [96, 40], [30, 46], [82, 28], [60, 48]].map(([x, y]) => (
+        <circle cx={x} cy={y} r="1.6" fill="#6f8fd0" />
+      ))}
+    </>
+  )}
+  {kind === 'oak' && (
+    <>
+      <rect width="120" height="120" fill="#8a5a33" />
+      {Array.from({ length: 10 }, (_, i) => (
+        <path
+          d={`M-5 ${i * 13 + 6}q20-8 40 0t40 0 40 0`}
+          fill="none"
+          stroke={i % 3 ? '#a67045' : '#6d4325'}
+          stroke-width={i % 2 ? 2.4 : 1.2}
+        />
+      ))}
+      <ellipse cx="78" cy="66" rx="9" ry="5" fill="none" stroke="#5a3519" stroke-width="1.6" />
+      <ellipse cx="78" cy="66" rx="4" ry="2" fill="#5a3519" />
+    </>
+  )}
+  {kind === 'mirror' && (
+    <>
+      <rect width="120" height="120" fill="#23262a" />
+      <rect x="12" y="12" width="96" height="96" fill="#cfd8dc" />
+      <path d="M12 80 60 12h20L12 104ZM50 108 108 38v30L80 108Z" fill="#eef3f5" />
+      <rect x="12" y="12" width="96" height="96" fill="none" stroke="#b88a2b" stroke-width="3" />
+    </>
+  )}
+</svg>
+
+<style>
+  .swatch {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>

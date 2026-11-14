@@ -1,0 +1,108 @@
+---
+import Base from '../layouts/Base.astro';
+import { gates } from '../content/site';
+---
+<Base title="How we work" description="Eight signed gates from brief to ex-factory. Enter your ex-factory date and get a working gate calendar.">
+  <section class="page-head wrap">
+    <h1>Every order walks the same eight gates.</h1>
+    <p class="lede">The calendar works backwards from the date you need goods out of the factory. Each gate has a signer, and the one after it does not start until it is signed.</p>
+  </section>
+
+  <section class="wrap section-tight" aria-labelledby="calc-h">
+    <h2 id="calc-h" style="font-size:2rem">Build your gate calendar</h2>
+    <form class="calc" id="calc" novalidate>
+      <label for="exf">Date you need goods ex-factory</label>
+      <input class="field" id="exf" name="exf" type="date" required aria-describedby="exf-help" />
+      <p class="help" id="exf-help">Lead times are planning placeholders (110 days from brief to ex-factory). Your real calendar depends on the category.</p>
+    </form>
+    <p id="calc-msg" role="status" aria-live="polite" style="margin-top:16px;font-weight:600;max-width:62ch"></p>
+
+    <div class="tna">
+      <section class="board" aria-label="Gate calendar" data-tna>
+        <div class="board-head"><h3 class="board-title" style="font-size:1.3rem"><span class="lamp" aria-hidden="true"></span>Your gate calendar</h3><span class="board-tag">Calendar days</span></div>
+        <div class="board-scroll">
+          <table class="grid">
+            <caption class="vh">Each gate with who signs it, its date and days before ex-factory</caption>
+            <colgroup><col class="col-code" /><col class="col-name" /><col class="col-sign" /><col class="col-date" /><col class="col-t" /></colgroup>
+            <thead><tr><th scope="col">Gate</th><th scope="col">What is signed</th><th scope="col" class="sign-cell">Signed by</th><th scope="col">Date</th><th scope="col">Before</th></tr></thead>
+            <tbody>
+              {gates.map((g) => (
+                <tr data-offset={g.offset}>
+                  <td><span class="ft">{g.code}</span></td>
+                  <td><span class="name-cell">{g.name}</span></td>
+                  <td class="sign-cell"><span class="name-cell" style="color:var(--flap-dim)">{g.signer}</span></td>
+                  <td><span class="ft" data-flap data-role="date">SET DATE</span></td>
+                  <td><span class="ft">{g.offset === 0 ? 'EX-FAC' : `T-${g.offset}`}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="board-foot"><span>Dates are calendar days counted back from ex-factory. Sample data.</span><span>Float is built in at G4 and G8.</span></div>
+      </section>
+    </div>
+  </section>
+
+  <section class="section on-dark" aria-labelledby="g-h">
+    <div class="wrap">
+      <div class="head"><h2 id="g-h">What each gate means.</h2></div>
+      <ol class="timetable">
+        {gates.map((g, n) => (
+          <li class="gate-row" id={g.id}>
+            <div class="gate-id"><span class="gate-code">{g.code}</span><span class="lamps" aria-hidden="true">{gates.map((_, i) => <i class={i <= n ? 'on' : ''}></i>)}</span></div>
+            <div><h3>{g.name}</h3><p>{g.text}</p></div>
+            <dl class="g-sign"><dt>Signed by</dt><dd>{g.signer}</dd></dl>
+            <dl class="g-unlock"><dt>Unlocks</dt><dd>{g.unlocks}</dd></dl>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="close on-dark" style="padding-top:0">
+    <div class="wrap">
+      <div class="board"><div class="close-row"><span class="ft" style="max-width:22ch">Ready to open gate one?</span><a class="btn" href="/contact/">Send a sourcing brief</a></div></div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { mountAll, flip } from '../scripts/flaps';
+
+  const board = document.querySelector<HTMLElement>('[data-tna]')!;
+  mountAll(board);
+  const input = document.querySelector<HTMLInputElement>('#exf')!;
+  const msg = document.querySelector<HTMLElement>('#calc-msg')!;
+  const rows = Array.from(board.querySelectorAll<HTMLElement>('tr[data-offset]'));
+  const MS = 86400000;
+  const MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+  const fmt = (t: number) => {
+    const d = new Date(t);
+    return `${String(d.getUTCDate()).padStart(2, '0')} ${MON[d.getUTCMonth()]} ${String(d.getUTCFullYear()).slice(2)}`;
+  };
+  const utc = (iso: string) => { const [y, m, d] = iso.split('-').map(Number); return Date.UTC(y, m - 1, d); };
+  const now = new Date();
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const iso = (t: number) => new Date(t).toISOString().slice(0, 10);
+  input.min = iso(today);
+  input.value = iso(today + 130 * MS);
+
+  let first = true;
+  function update() {
+    if (!input.value) { msg.textContent = 'Choose the date you need goods out of the factory.'; return; }
+    const exf = utc(input.value);
+    rows.forEach((row, i) => {
+      const off = Number(row.dataset.offset);
+      const el = row.querySelector<HTMLElement>('[data-role="date"]')!;
+      flip(el, fmt(exf - off * MS), first ? 0 : i * 60);
+    });
+    first = false;
+    const days = Math.round((exf - today) / MS);
+    const need = Number(rows[0].dataset.offset);
+    msg.textContent = days >= need
+      ? `To hit this date, gate one must open by ${fmt(exf - need * MS)}. That leaves ${days - need} days to spare.`
+      : `Your date leaves ${days} days and a standard schedule needs ${need}. Gates G1 to G4 would have to be compressed: ask us about a fast track.`;
+  }
+  input.addEventListener('input', update);
+  update();
+</script>

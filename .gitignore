@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/build/
+.impeccable/config.local.json
+.DS_Store

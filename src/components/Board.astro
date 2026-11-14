@@ -1,0 +1,115 @@
+---
+import { orders as defaultOrders, gates, type Order } from '../content/site';
+import Swatch from './Swatch.astro';
+
+interface Props { orders?: readonly Order[]; live?: boolean; title?: string }
+const { orders = defaultOrders, live = true, title = 'Orders in production' } = Astro.props;
+const names = gates.map((g) => g.short);
+const cls = (s: string) => (s === 'WATCH' ? 'watch' : s === 'HOLD' ? 'hold' : '');
+---
+<section class="board" aria-labelledby="board-title" data-board data-live={live ? '1' : '0'} data-gates={JSON.stringify(names)}>
+  <div class="board-head">
+    <h2 class="board-title" id="board-title" style="font-size:1.3rem;line-height:1.1"><span class="lamp" aria-hidden="true"></span>{title}</h2>
+    <div class="board-tools">
+      <span class="board-tag">Sample data</span>
+      {live && <button class="pause" type="button" data-pause aria-pressed="false" hidden>Pause updates</button>}
+    </div>
+  </div>
+  <div class="board-scroll">
+    <table class="grid" role="table">
+      <caption class="vh">Sample orders, the gate each is at, due date and status</caption>
+      <colgroup><col class="col-po" /><col class="col-goods" /><col class="col-hub" /><col class="col-gate" /><col class="col-due" /><col class="col-status" /></colgroup>
+      <thead role="rowgroup">
+        <tr role="row"><th role="columnheader" scope="col" class="po-cell">PO</th><th role="columnheader" scope="col">Goods</th><th role="columnheader" scope="col" class="hub-cell">From</th><th role="columnheader" scope="col">Gate</th><th role="columnheader" scope="col" class="due-cell">Ex-factory</th><th role="columnheader" scope="col">Status</th></tr>
+      </thead>
+      <tbody role="rowgroup">
+        {orders.map((o) => (
+          <tr role="row" data-row data-gate={o.gate} data-status={o.status}>
+            <td role="cell" class="po-cell"><span class="ft" data-flap>{o.po}</span></td>
+            <td role="cell"><div class="goods"><span class="chip"><Swatch kind={o.swatch} /></span><span class="ft" data-flap>{o.goods}</span></div></td>
+            <td role="cell" class="hub-cell"><span class="ft" data-flap>{o.hub}</span></td>
+            <td role="cell">
+              <div class="gate-cell">
+                <span class="ft" data-flap data-role="gate">{names[o.gate]}</span>
+                <span class="lamps" role="img" aria-label={`Gate ${o.gate + 1} of ${gates.length}`} data-lamps>
+                  {gates.map((_, i) => <i class={i < o.gate ? 'on' : i === o.gate ? 'now' : ''}></i>)}
+                </span>
+              </div>
+            </td>
+            <td role="cell" class="due-cell"><span class="ft" data-flap>{o.due}</span></td>
+            <td role="cell"><span class={`st ${cls(o.status)}`} data-st><span class="ft" data-flap data-role="status">{o.status}</span></span></td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <div class="board-foot"><span>Illustrative orders. Not real shipments.</span><span>Each lamp is a signed gate.</span></div>
+</section>
+
+<script>
+  import { mountAll, flip, reduced } from '../scripts/flaps';
+
+  document.querySelectorAll<HTMLElement>('[data-board]').forEach((board) => {
+    mountAll(board);
+    const names: string[] = JSON.parse(board.dataset.gates || '[]');
+    const rows = Array.from(board.querySelectorAll<HTMLElement>('[data-row]'));
+    const initial = rows.map((r) => ({ gate: Number(r.dataset.gate), status: r.dataset.status || 'ON TIME' }));
+
+    // One authored moment: the board settles in, row by row.
+    if (!reduced()) {
+      let d = 0;
+      rows.forEach((row) => {
+        row.querySelectorAll<HTMLElement>('[data-flap]').forEach((el) => flip(el, el.dataset.text || '', d, 16));
+        d += 90;
+      });
+    }
+
+    if (board.dataset.live !== '1') return;
+    const btn = board.querySelector<HTMLButtonElement>('[data-pause]');
+    let paused = reduced(); // reduced motion: start paused, user may resume
+    let held = false; // hovering or keyboard focus inside the board also holds updates
+    board.addEventListener('pointerenter', () => { held = true; });
+    board.addEventListener('pointerleave', () => { held = false; });
+    board.addEventListener('focusin', () => { held = true; });
+    board.addEventListener('focusout', () => { held = false; });
+    const setBtn = () => {
+      if (!btn) return;
+      btn.hidden = false;
+      btn.setAttribute('aria-pressed', String(paused));
+      btn.textContent = paused ? 'Resume updates' : 'Pause updates';
+    };
+    btn?.addEventListener('click', () => { paused = !paused; setBtn(); });
+    setBtn();
+
+    const paint = (row: HTMLElement, gate: number, status: string) => {
+      row.dataset.gate = String(gate);
+      row.dataset.status = status;
+      const lamps = row.querySelector('[data-lamps]');
+      if (lamps) {
+        lamps.setAttribute('aria-label', `Gate ${gate + 1} of ${names.length}`);
+        lamps.querySelectorAll('i').forEach((i, n) => { i.className = n < gate ? 'on' : n === gate ? 'now' : ''; });
+      }
+      const g = row.querySelector<HTMLElement>('[data-role="gate"]');
+      const s = row.querySelector<HTMLElement>('[data-role="status"]');
+      if (g) flip(g, names[gate]);
+      if (s && s.dataset.text !== status) flip(s, status);
+      const st = row.querySelector('[data-st]');
+      if (st) st.className = 'st ' + (status === 'WATCH' ? 'watch' : status === 'HOLD' ? 'hold' : '');
+    };
+
+    let tick = 0;
+    window.setInterval(() => {
+      if (paused || held || document.hidden) return;
+      tick++;
+      const open = rows.filter((r) => Number(r.dataset.gate) < names.length - 1);
+      if (open.length === 0) {
+        rows.forEach((r, i) => paint(r, initial[i].gate, initial[i].status));
+        return;
+      }
+      const row = open[tick % open.length];
+      const next = Number(row.dataset.gate) + 1;
+      // Passing a gate clears a WATCH or HOLD: the signer has released it.
+      paint(row, next, 'ON TIME');
+    }, 5200);
+  });
+</script>

@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import { services, faqs } from '../content/site';
+---
+<Base title="Services" description="Sourcing, development, costing, quality control, logistics and buyer visits for home textiles and hard goods made in India.">
+  <section class="page-head wrap">
+    <h1>Six jobs, each tied to a gate.</h1>
+    <p class="lede">We do the parts of sourcing that go wrong when nobody owns them. For each one: what you give us, what you get back, and which gates it signs.</p>
+  </section>
+
+  <section class="wrap section-tight" aria-label="Services">
+    <div class="rows" style="margin-top:0">
+      {services.map((s) => (
+        <article class="row" id={s.id}>
+          <h2 style="font-size:2rem;line-height:1">{s.name}</h2>
+          <div><span class="lab">You give us</span><p>{s.gives}</p></div>
+          <div><span class="lab">You get</span><p>{s.gets}</p></div>
+          <div><span class="lab">Gates</span><span class="gates">{s.gates}</span></div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="faq-h">
+    <div class="head"><h2 id="faq-h">Questions buyers ask first.</h2></div>
+    <div class="faq">
+      {faqs.map((f) => (<details><summary>{f.q}</summary><p>{f.a}</p></details>))}
+    </div>
+    <p style="margin-top:40px"><a class="btn" href="/contact/">Send a sourcing brief</a></p>
+  </section>
+</Base>

@@ -1,0 +1,38 @@
+---
+import { nav, site, about } from '../content/site';
+import Flaps from './Flaps.astro';
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <Flaps text="GRATIA" />
+        <p style="margin-top:16px;max-width:30ch">Home textiles and home hard goods, sourced in India, signed off at every gate.</p>
+      </div>
+      <div>
+        <h2>Site</h2>
+        <ul>
+          {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+          <li><a href="/contact/">Send a brief</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Markets</h2>
+        <ul>{about.markets.map((m) => <li>{m}</li>)}</ul>
+      </div>
+      <div>
+        <h2>Contact</h2>
+        <ul>
+          <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+          <li><a href={`tel:${site.phone.replace(/\s/g, '')}`}>{site.phone}</a></li>
+          <li>{site.address.join(', ')}</li>
+          <li>{site.hours}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="fine">
+      <span>&copy; {site.year} {site.name}. All rights reserved.</span>
+      <span>Placeholder content: names, figures, orders and addresses are invented until replaced.</span>
+    </div>
+  </div>
+</footer>

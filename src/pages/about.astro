@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import Flaps from '../components/Flaps.astro';
+import { about, site } from '../content/site';
+---
+<Base title="About" description="Gratia Sourcing is a buying house that represents overseas buyers on the factory floor in India.">
+  <section class="page-head wrap">
+    <h1>The buyer's representative on the factory floor.</h1>
+    <div style="margin-top:32px;font-size:clamp(2.2rem,7vw,4.5rem)"><Flaps text="GRATIA" /></div>
+    <p class="lede" style="margin-top:16px">{site.meaning}</p>
+  </section>
+
+  <section class="wrap section-tight two" aria-labelledby="story-h">
+    <h2 id="story-h" style="max-width:10em">Why a sourcing agent has to be trusted.</h2>
+    <div class="story">{about.story.map((p) => <p>{p}</p>)}</div>
+  </section>
+
+  <section class="wrap section" aria-labelledby="team-h">
+    <h2 id="team-h">Who you will deal with.</h2>
+    <div class="rows" style="margin-top:32px">
+      {about.roles.map((r) => (
+        <div class="row" style="grid-template-columns:minmax(0,1fr) minmax(0,1.6fr)"><h3 style="font-size:1.8rem">{r.role}</h3><p>{r.text}</p></div>
+      ))}
+    </div>
+    <p class="mute" style="margin-top:16px">Team names and photographs to be added.</p>
+  </section>
+
+  <section class="section on-dark" aria-labelledby="dest-h">
+    <div class="wrap">
+      <div class="head"><h2 id="dest-h">Where the goods go.</h2></div>
+      <div class="board dest">
+        <table class="grid">
+          <caption class="vh">Markets we serve</caption>
+          <thead><tr><th scope="col">Destination</th><th scope="col">Status</th></tr></thead>
+          <tbody>{about.markets.map((m) => (<tr><td><span class="ft">{m}</span></td><td><span class="st"><span class="ft">Serving</span></span></td></tr>))}</tbody>
+        </table>
+      </div>
+      <p style="margin-top:32px"><a class="btn" href="/contact/">Send a sourcing brief</a></p>
+    </div>
+  </section>
+</Base>

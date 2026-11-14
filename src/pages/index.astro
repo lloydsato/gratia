@@ -1,0 +1,92 @@
+---
+import Base from '../layouts/Base.astro';
+import Board from '../components/Board.astro';
+import Swatch from '../components/Swatch.astro';
+import Flaps from '../components/Flaps.astro';
+import { hero, gates, categories, site } from '../content/site';
+
+const byId = Object.fromEntries(categories.map((c) => [c.id, c]));
+const patches = [
+  ['p-a', 'bedding'], ['p-b', 'cushions'], ['p-c', 'throws'], ['p-d', 'rugs'],
+  ['p-e', 'lighting'], ['p-h', 'storage'], ['p-f', 'furniture'], ['p-g', 'decor'],
+] as const;
+---
+<Base>
+  <section class="hero">
+    <div class="wrap">
+      <h1>{hero.headline}</h1>
+      <p class="lede">{hero.lede}</p>
+      <div class="actions">
+        <a class="btn" href="/contact/">{hero.primary}</a>
+        <a class="btn-line" href="/how-we-work/">{hero.secondary}</a>
+      </div>
+      <div class="hero-board"><Board /></div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="goods-h">
+    <div class="wrap">
+      <div class="head-row">
+        <div class="head wide"><h2 id="goods-h">Two kinds of home goods, one team.</h2></div>
+        <p class="lede">Textiles and hard goods usually need two agents. Here the same merchandiser follows both, so a bed, its cushions and the lamp beside it arrive on one schedule.</p>
+      </div>
+      <div class="patch-grid">
+        {patches.map(([cls, id]) => (
+          <a class={`patch ${cls}`} href={`/products/#${id}`}>
+            <Swatch kind={byId[id].swatch} />
+            <span class="cap"><b>{byId[id].name}</b><span>{byId[id].items}</span></span>
+          </a>
+        ))}
+      </div>
+      <p style="margin-top:24px"><a class="btn-line" href="/products/">All categories, materials and lead times</a></p>
+    </div>
+  </section>
+
+  <section class="section on-dark" aria-labelledby="gates-h">
+    <div class="wrap">
+      <div class="head-row">
+        <div class="head wide"><h2 id="gates-h">Eight gates. Nothing moves until one is signed.</h2></div>
+        <p class="lede">A gate has a named signer and something it unlocks. If a gate is not signed, the next step does not start, and you hear about it that day.</p>
+      </div>
+      <ol class="timetable">
+        {gates.map((g, n) => (
+          <li class="gate-row">
+            <div class="gate-id"><span class="gate-code">{g.code}</span><span class="lamps" aria-hidden="true">{gates.map((_, i) => <i class={i <= n ? 'on' : ''}></i>)}</span></div>
+            <div><h3>{g.name}</h3><p>{g.text}</p></div>
+            <dl class="g-sign"><dt>Signed by</dt><dd>{g.signer}</dd></dl>
+            <dl class="g-unlock"><dt>Unlocks</dt><dd>{g.unlocks}</dd></dl>
+          </li>
+        ))}
+      </ol>
+      <p style="margin-top:32px"><a class="btn" href="/how-we-work/">Build your gate calendar</a></p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="proof-h">
+    <div class="wrap two">
+      <div class="head wide">
+        <h2 id="proof-h">We check the paper and the product.</h2>
+        <p class="lede">Certificates are verified at the factory gate, not copied from a brochure. Test reports travel with your shipping documents, and an inspection that fails stops the shipment.</p>
+        <p><a class="btn-line" href="/sustainability/">Compliance and sustainability</a></p>
+      </div>
+      <ul class="commit">
+        <li><div><h3>Verified before you hear a name</h3><p>Audit status and certificates are checked at G2, before a supplier reaches your shortlist.</p></div></li>
+        <li><div><h3>Inspected on the line, not after it</h3><p>In-line checks at G6 mean a defect is fixed in production, not argued about in port.</p></div></li>
+        <li><div><h3>Documents that agree with each other</h3><p>Invoice, packing list and test reports are cross-checked at G8, so customs has nothing to query.</p></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="close on-dark" aria-labelledby="close-h">
+    <div class="wrap">
+      <div class="head wide"><h2 id="close-h">Next departure: your brief.</h2></div>
+      <p class="lede" style="margin-top:16px">Send a spec, a drawing or a reference photo. We reply within one working day with whether we can help and what we need.</p>
+      <div class="board" role="group" aria-label="Send a brief">
+        <div class="close-row">
+          <span class="ft" style="max-width:20ch">Brief received. Gate one opens today.</span>
+          <a class="btn" href="/contact/">Send a sourcing brief</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
